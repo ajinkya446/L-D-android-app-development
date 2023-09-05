@@ -19,12 +19,15 @@ public class MainActivity extends AppCompatActivity {
     private NoteViewModel noteViewModel;
 
     ActivityResultLauncher<Intent> intentActivityResultLauncher;
+    ActivityResultLauncher<Intent> intentActivityResultUpdateLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         registerActivity();
+        registerUpdateActivity();
+
 
         RecyclerView recyclerView = findViewById(R.id.recylerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -49,6 +52,16 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Note Deleted Successfully...", Toast.LENGTH_SHORT).show();
             }
         }).attachToRecyclerView(recyclerView);
+
+        noteAdapter.setOnItemClickListener(note -> {
+            Intent intent = new Intent(this, UpdateActivity.class);
+            intent.putExtra("id", note.getId());
+            intent.putExtra("title", note.getTitle());
+            intent.putExtra("description", note.getDescription());
+
+            ///Activity Launcher
+            intentActivityResultUpdateLauncher.launch(intent);
+        });
     }
 
     @Override
@@ -71,6 +84,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    public void registerUpdateActivity() {
+        intentActivityResultUpdateLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            int resultCode = result.getResultCode();
+            Intent data = result.getData();
+            if (resultCode == RESULT_OK && data != null) {
+                String title = data.getStringExtra("titleLast");
+                String description = data.getStringExtra("descriptionLast");
+                int id = data.getIntExtra("noteID", -1);
+                Note note = new Note(title, description);
+                note.setId(id);
+                noteViewModel.updateNote(note);
+            }
+        });
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
