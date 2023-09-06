@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 noteViewModel.deleteNote(noteAdapter.getNote(viewHolder.getAdapterPosition()));
-                Toast.makeText(MainActivity.this, "Note Deleted Successfully...", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MainActivity.this, "Note Deleted Successfully...", Toast.LENGTH_SHORT).show();
             }
         }).attachToRecyclerView(recyclerView);
 
