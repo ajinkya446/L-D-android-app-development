@@ -1,21 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    android:orientation="vertical">
+    android:layout_marginLeft="16dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginRight="16dp"
+    android:background="@drawable/background_border">
 
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/name"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:clickable="true" />
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="16dp">
 
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/number"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="10sp"
-        android:clickable="true" />
-</LinearLayout>
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/name"
+            android:layout_width="0dp"
+            android:layout_height="24dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/callIcon"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="0.4"
+            android:clickable="true"
+            android:focusable="true"
+            app:srcCompat="@android:drawable/sym_call_outgoing" />
+
+        <ImageView
+            android:id="@+id/msgIcon"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="0.2"
+            android:clickable="true"
+            android:focusable="true"
+            app:srcCompat="@android:drawable/sym_action_chat" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
