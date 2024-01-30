@@ -7,8 +7,10 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.telephony.SmsManager;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,6 +26,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     //    EditText editTextMessage;
 //    Button buttonSend, buttonReadContact;
+    TextView textViewData;
     RecyclerView recyclerViewContact;
 
     @SuppressLint("MissingInflatedId")
@@ -35,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
 //        buttonSend = findViewById(R.id.sendButton);
 //        buttonReadContact = findViewById(R.id.readButton);
         recyclerViewContact = findViewById(R.id.recyclerView);
+        textViewData=findViewById(R.id.no_data);
         recyclerViewContact.setLayoutManager(new LinearLayoutManager(this));
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_DENIED) {
             // if permission is not granted then we are requesting for the permissions on below line.
@@ -90,29 +94,16 @@ public class MainActivity extends AppCompatActivity {
                     items.add(new ContactModel(name, number));
                 }
             }
-            ContactAdapter contactAdapter = new ContactAdapter(items, this);
-            recyclerViewContact.setAdapter(contactAdapter);
+            if(items.isEmpty()){
+                recyclerViewContact.setVisibility(View.INVISIBLE);
+            }else{
+                ContactAdapter contactAdapter = new ContactAdapter(items, this);
+                recyclerViewContact.setAdapter(contactAdapter);
+                textViewData.setVisibility(View.INVISIBLE);
+            }
+
         } else {
             Toast.makeText(this, "Your device is incompatible reading contacts", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void sendSMS() {
-        try {
-            String phone = "8805446046";
-//            String message = editTextMessage.getText().toString();
-
-//            if (!message.isEmpty()) {
-                SmsManager smsManager = SmsManager.getDefault();
-
-                ///Sending message here
-                smsManager.sendTextMessage(phone, null, "message", null, null);
-                Toast.makeText(MainActivity.this, "Message Send successfully", Toast.LENGTH_SHORT).show();
-           /* } else {
-                Toast.makeText(MainActivity.this, "Please write the message first", Toast.LENGTH_SHORT).show();
-            }*/
-        } catch (Exception e) {
-            throw e;
         }
     }
 }
