@@ -11,6 +11,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Icon;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -23,10 +24,17 @@ public class NotificationReceiver extends BroadcastReceiver {
             NotificationChannel channel = new NotificationChannel("1", "local", NotificationManager.IMPORTANCE_DEFAULT);
             NotificationManager manager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
             manager.createNotificationChannel(channel);
-            PendingIntent pendingIntent = PendingIntent.getActivity(context.getApplicationContext(), 100, intent, PendingIntent.FLAG_MUTABLE);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context.getApplicationContext(), 100, intent, PendingIntent.FLAG_MUTABLE);
+
+            Intent dismissIntent = new Intent(context, DismissReceiver.class);
+            PendingIntent dismissPendingIntent = PendingIntent.getBroadcast(context.getApplicationContext(), 100, dismissIntent, PendingIntent.FLAG_MUTABLE);
+
+            Notification.Action action = new Notification.Action.Builder(Icon.createWithResource(context, R.drawable.baseline_add_alert_24), "Send Message", pendingIntent).build();
+            Notification.Action dismissIntentAction = new Notification.Action.Builder(Icon.createWithResource(context, R.drawable.baseline_add_alert_24), "dismiss", dismissPendingIntent).build();
 
             Notification.Builder builder = new Notification.Builder(context, "1");
-            builder.setSmallIcon(R.drawable.baseline_add_alert_24).setAutoCancel(true).setContentIntent(pendingIntent).setContentTitle("Test Notification").setContentText("context is the test local notifications");
+
+            builder.setSmallIcon(R.drawable.baseline_add_alert_24).addAction(action).addAction(dismissIntentAction).setAutoCancel(true).setContentIntent(pendingIntent).setContentTitle("Test Notification").setContentText("context is the test local notifications");
 
             NotificationManagerCompat compat = NotificationManagerCompat.from(context);
             if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
