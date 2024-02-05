@@ -1,4 +1,4 @@
-package com.ajinkya.smsapp;
+package com.ajinkya.fire_example;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 import static androidx.core.content.ContextCompat.getSystemService;

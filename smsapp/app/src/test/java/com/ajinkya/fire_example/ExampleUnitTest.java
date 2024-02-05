@@ -1,4 +1,4 @@
-package com.ajinkya.smsapp;
+package com.ajinkya.fire_example;
 
 import org.junit.Test;
 

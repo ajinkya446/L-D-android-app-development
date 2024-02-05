@@ -1,4 +1,4 @@
-package com.ajinkya.smsapp;
+package com.ajinkya.fire_example;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -49,6 +49,11 @@ public class HomeScreen extends AppCompatActivity {
         buttonNotification.setOnClickListener(v -> {
             NotificationReceiver notificationReceiver = new NotificationReceiver();
             notificationReceiver.onReceive(this, new Intent(this, MainActivity.class));
+        });
+
+        buttonPeriodicNotifications.setOnClickListener(v -> {
+            Intent firebaseScreenIntent = new Intent(this, SaveDetails.class);
+            startActivity(firebaseScreenIntent);
         });
 
     }

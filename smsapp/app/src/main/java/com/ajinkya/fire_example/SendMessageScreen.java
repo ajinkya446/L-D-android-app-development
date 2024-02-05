@@ -1,4 +1,4 @@
-package com.ajinkya.smsapp;
+package com.ajinkya.fire_example;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
