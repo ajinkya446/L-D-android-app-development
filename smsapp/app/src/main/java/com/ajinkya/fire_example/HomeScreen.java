@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -17,8 +18,9 @@ import android.widget.Button;
 import java.util.Calendar;
 
 public class HomeScreen extends AppCompatActivity {
-    Button buttonNotification, buttonMessage, buttonPeriodicNotifications;
+    Button buttonNotification, buttonMessage, buttonPeriodicNotifications, buttonPushNotification;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,6 +28,7 @@ public class HomeScreen extends AppCompatActivity {
         buttonMessage = findViewById(R.id.button2);
         buttonNotification = findViewById(R.id.button);
         buttonPeriodicNotifications = findViewById(R.id.button3);
+        buttonPushNotification = findViewById(R.id.buttonPush);
         try {/// Code for periodic Notifications.
             Calendar calendar = Calendar.getInstance();
             calendar.set(Calendar.HOUR_OF_DAY, 15);
@@ -54,6 +57,10 @@ public class HomeScreen extends AppCompatActivity {
         buttonPeriodicNotifications.setOnClickListener(v -> {
             Intent firebaseScreenIntent = new Intent(this, SaveDetails.class);
             startActivity(firebaseScreenIntent);
+        });
+
+        buttonPushNotification.setOnClickListener(v->{
+
         });
 
     }

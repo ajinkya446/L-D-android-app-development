@@ -10,16 +10,18 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class DashboardScreen extends AppCompatActivity {
-    private ActivityDashboardScreenBinding binding;
+    ActivityDashboardScreenBinding binding;
     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FirebaseUser user = firebaseAuth.getCurrentUser();
+        FirebaseUser userData = firebaseAuth.getCurrentUser();
         /// Added data biding for the screen.
         binding = DataBindingUtil.setContentView(this, R.layout.activity_dashboard_screen);
-        binding.nameText.setText("Welcome" + " " + user.getEmail());
+//        binding.nameText.setText("Welcome" + " " + user.getEmail());
+        UserModel userModel= new UserModel(userData.getEmail(),"*******");
+        binding.setData(userModel);
 
     }
 }

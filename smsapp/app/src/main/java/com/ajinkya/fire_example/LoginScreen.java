@@ -4,6 +4,7 @@ import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -16,6 +17,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.ajinkya.fire_example.databinding.ActivityDashboardScreenBinding;
+import com.ajinkya.fire_example.databinding.ActivityLoginScreenBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Firebase;
@@ -24,8 +27,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class LoginScreen extends AppCompatActivity {
-    EditText editTextEmail, editTextPassword;
-    Button buttonSignIn, buttonSignUp;
+   /* EditText editTextEmail, editTextPassword;
+    Button buttonSignIn, buttonSignUp;*/
+
+    ActivityLoginScreenBinding activityLoginScreenBinding;
     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     FirebaseUser user;
 
@@ -33,18 +38,14 @@ public class LoginScreen extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login_screen);
-        editTextEmail = findViewById(R.id.email);
-        editTextPassword = findViewById(R.id.password);
-        buttonSignIn = findViewById(R.id.buttonSignIN);
-        buttonSignUp = findViewById(R.id.buttonSignUP);
-        buttonSignIn.setOnClickListener(v -> {
-            String email = editTextEmail.getText().toString();
+        activityLoginScreenBinding = DataBindingUtil.setContentView(this, R.layout.activity_login_screen);
+        activityLoginScreenBinding.buttonSignIN.setOnClickListener(v -> {
+            String email = activityLoginScreenBinding.email.getText().toString();
             if (!email.isEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     String emailData = user.getEmail();
-                    if (emailData.toLowerCase() == editTextEmail.getText().toString().toLowerCase()) {
+                    if (emailData.toLowerCase() == activityLoginScreenBinding.email.getText().toString().toLowerCase()) {
                         Intent intent = new Intent(LoginScreen.this, DashboardScreen.class);
                         startActivity(intent);
                         finish();
@@ -60,19 +61,37 @@ public class LoginScreen extends AppCompatActivity {
                 Toast.makeText(this, "Please enter valid email address", Toast.LENGTH_SHORT).show();
             }
         });
-        buttonSignUp.setOnClickListener(v -> {
-            String email = editTextEmail.getText().toString();
+        activityLoginScreenBinding.buttonSignUP.setOnClickListener(v -> {
+            String email = activityLoginScreenBinding.email.getText().toString();
             if (!email.isEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 registerUser();
             } else {
                 Toast.makeText(this, "Please enter valid email address", Toast.LENGTH_SHORT).show();
             }
         });
+
+        /// Forget password activity
+        activityLoginScreenBinding.forgetPassword.setOnClickListener(v -> {
+            String email = activityLoginScreenBinding.email.getText().toString();
+            if (!email.isEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                firebaseAuth.sendPasswordResetEmail(activityLoginScreenBinding.email.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(LoginScreen.this, "We have sent email to reset your password", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            } else {
+                Toast.makeText(this, "Please enter valid email address", Toast.LENGTH_SHORT).show();
+            }
+
+        });
     }
 
     /// Signing in the user as per the user details
     public void signInDetails() {
-        firebaseAuth.signInWithEmailAndPassword(editTextEmail.getText().toString(), editTextPassword.getText().toString())
+        firebaseAuth.signInWithEmailAndPassword(activityLoginScreenBinding.email.getText().toString(), activityLoginScreenBinding.password.getText().toString())
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -82,8 +101,8 @@ public class LoginScreen extends AppCompatActivity {
                             startActivity(intent);
                             finish();
                         } else {
-                            editTextEmail.setText("");
-                            editTextPassword.setText("");
+                            activityLoginScreenBinding.email.setText("");
+                            activityLoginScreenBinding.password.setText("");
                             Toast.makeText(LoginScreen.this, "User email does not exists please sign up once",
                                     Toast.LENGTH_SHORT).show();
 
@@ -94,7 +113,7 @@ public class LoginScreen extends AppCompatActivity {
 
     /// Register the user details as per the EMAIL authentications.
     public void registerUser() {
-        firebaseAuth.createUserWithEmailAndPassword(editTextEmail.getText().toString(), editTextPassword.getText().toString())
+        firebaseAuth.createUserWithEmailAndPassword(activityLoginScreenBinding.email.getText().toString(), activityLoginScreenBinding.password.getText().toString())
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -105,8 +124,8 @@ public class LoginScreen extends AppCompatActivity {
                             startActivity(intent);
                             finish();
                         } else {
-                            editTextEmail.setText("");
-                            editTextPassword.setText("");
+                            activityLoginScreenBinding.email.setText("");
+                            activityLoginScreenBinding.password.setText("");
                             Toast.makeText(LoginScreen.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
 
                         }
