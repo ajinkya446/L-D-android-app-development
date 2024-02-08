@@ -1,6 +1,7 @@
 package com.abc.notifiaction.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.abc.notifiaction.CategoryModel;
+import com.abc.notifiaction.QuizList;
 import com.abc.notifiaction.R;
 
 import java.util.ArrayList;
@@ -49,9 +51,11 @@ public class GridViewAdapter extends ArrayAdapter<CategoryModel> {
         titleGridView.setText(categoryModel.titleName);
         imgGridview.setImageResource(categoryModel.drawableId);
 
-        cardView.setOnClickListener(v -> {
+        /*cardView.setOnClickListener(v -> {
             Toast.makeText(ctx, "Category " + categoryModel.titleName + " " + "selected", Toast.LENGTH_SHORT).show();
-        });
+            Intent intent =new Intent(ctx, QuizList.class);
+
+        });*/
         return listitemView;
     }
 }
