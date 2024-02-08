@@ -11,8 +11,12 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
+import com.squareup.picasso.Picasso;
+
+import pl.droidsonroids.gif.GifImageView;
+
 public class SplashScreen extends AppCompatActivity {
-    ImageView imageView;
+    GifImageView imageView;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -22,10 +26,10 @@ public class SplashScreen extends AppCompatActivity {
         imageView = findViewById(R.id.imageView);
 
         /// Creating animation
-        Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.splash_anim);
-        imageView.startAnimation(animation);
-        imageView.setImageResource(R.drawable.img);
-
+//        Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.splash_anim);
+//        imageView.startAnimation(animation);
+//        imageView.setImageResource(R.drawable.test);
+//        Picasso.get().load(R.drawable.test).into(imageView);
         /// Adding handler
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -41,6 +45,6 @@ public class SplashScreen extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             }
-        }, 5000);
+        }, 3000);
     }
 }
