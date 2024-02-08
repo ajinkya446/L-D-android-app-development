@@ -22,7 +22,9 @@ public class QuizList extends AppCompatActivity {
         Intent intent = getIntent();
 
         String title = intent.getStringExtra("title");
+        Integer background = intent.getIntExtra("background",0);
 
         materialToolbar.setTitle(title);
+        materialToolbar.setBackgroundResource(background);
     }
 }

@@ -65,6 +65,7 @@ public class DashboardScreen extends AppCompatActivity {
             Toast.makeText(this, "Category " + courseModelArrayList.get(position).titleName + " " + "selected", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this, QuizList.class);
             intent.putExtra("title", courseModelArrayList.get(position).titleName); // put image data in Intent
+            intent.putExtra("background", courseModelArrayList.get(position).drawable); // put image data in Intent
             startActivity(intent);
         });
     }
