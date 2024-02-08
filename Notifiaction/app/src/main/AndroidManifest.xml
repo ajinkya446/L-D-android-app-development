@@ -18,7 +18,7 @@
             android:name=".DashboardScreen"
             android:exported="false" />
         <activity
-            android:name=".HomeScreen"
+            android:name=".LoginScreen"
             android:exported="false" />
         <activity
             android:name=".SplashScreen"

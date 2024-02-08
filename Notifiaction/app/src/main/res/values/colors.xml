@@ -7,4 +7,6 @@
     <color name="grey">#e0e0e0</color>
     <color name="darkgrey">#aeb0af</color>
     <color name="red">#E44C21</color>
+    <color name="darkred">#EEE60B0B</color>
+    <color name="faintred">#51EDE8E8</color>
 </resources>

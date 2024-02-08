@@ -10,7 +10,6 @@ import android.os.Handler;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 public class SplashScreen extends AppCompatActivity {
     ImageView imageView;
@@ -35,7 +34,7 @@ public class SplashScreen extends AppCompatActivity {
                 boolean value = sharedPreferences.getBoolean("walkthrough", false);
                 Intent intent;
                 if (value) {
-                    intent = new Intent(SplashScreen.this, HomeScreen.class);
+                    intent = new Intent(SplashScreen.this, LoginScreen.class);
                 } else {
                     intent = new Intent(SplashScreen.this, MainActivity.class);
                 }
