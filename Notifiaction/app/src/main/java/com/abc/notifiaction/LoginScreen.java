@@ -8,6 +8,8 @@ import androidx.databinding.DataBindingUtil;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.abc.notifiaction.databinding.ActivityLoginScreenBinding;
@@ -17,6 +19,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -38,7 +41,7 @@ public class LoginScreen extends AppCompatActivity {
                 .requestIdToken("672878074599-ocqjoollkuvto76c8sbulbpbi3a4fbfe.apps.googleusercontent.com")
                 .requestEmail()
                 .build();
-
+        activityHomeScreenBinding.indicator.setVisibility(View.INVISIBLE);
         // Initialize sign in client
         GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(LoginScreen.this, googleSignInOptions);
 
@@ -50,9 +53,18 @@ public class LoginScreen extends AppCompatActivity {
             startActivity(new Intent(LoginScreen.this, DashboardScreen.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             finish();
         }
+
         activityHomeScreenBinding.containedButton.setOnClickListener(v -> {
-            Intent intent = googleSignInClient.getSignInIntent();
-            someActivityResultLauncher.launch(intent);
+            if (activityHomeScreenBinding.indicator.getVisibility() == View.INVISIBLE) {
+                activityHomeScreenBinding.indicator.getIndeterminateDrawable().setColorFilter(0xff0B05F6, android.graphics.PorterDuff.Mode.MULTIPLY);
+                activityHomeScreenBinding.indicator.setVisibility(View.VISIBLE);
+                Intent intent = googleSignInClient.getSignInIntent();
+                someActivityResultLauncher.launch(intent);
+            } else {
+                // Either gone or invisible
+                Toast.makeText(this, "Please wait for sometime to complete operation first...", Toast.LENGTH_SHORT).show();
+            }
+
         });
     }
 
@@ -70,6 +82,7 @@ public class LoginScreen extends AppCompatActivity {
                                 AuthCredential authCredential = GoogleAuthProvider.getCredential(googleSignInAccount.getIdToken(), null);
                                 mAuth.signInWithCredential(authCredential).addOnCompleteListener(LoginScreen.this, task -> {
                                     if (task.isSuccessful()) {
+                                        activityHomeScreenBinding.indicator.setVisibility(View.INVISIBLE);
                                         startActivity(new Intent(LoginScreen.this, DashboardScreen.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                                         Toast.makeText(LoginScreen.this, "Successfully logged in", Toast.LENGTH_SHORT).show();
                                         finish();
@@ -80,8 +93,13 @@ public class LoginScreen extends AppCompatActivity {
                             }
                         } catch (ApiException e) {
                             e.printStackTrace();
+                            activityHomeScreenBinding.indicator.setVisibility(View.INVISIBLE);
                         }
                     }
+                } else {
+                    activityHomeScreenBinding.indicator.setVisibility(View.INVISIBLE);
+                    Log.d("Result", result.toString());
+                    Toast.makeText(this, "Cant Login", Toast.LENGTH_SHORT).show();
                 }
             });
 

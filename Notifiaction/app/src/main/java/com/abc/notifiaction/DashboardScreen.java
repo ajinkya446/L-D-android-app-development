@@ -5,15 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
-import android.widget.Toast;
 
 import com.abc.notifiaction.adapter.GridViewAdapter;
+import com.abc.notifiaction.model.CategoryModel;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -62,7 +59,6 @@ public class DashboardScreen extends AppCompatActivity {
         GridViewAdapter gridViewAdapter = new GridViewAdapter(this, courseModelArrayList);
         gridView.setAdapter(gridViewAdapter);
         gridView.setOnItemClickListener((parent, view, position, id) -> {
-            Toast.makeText(this, "Category " + courseModelArrayList.get(position).titleName + " " + "selected", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this, QuizList.class);
             intent.putExtra("title", courseModelArrayList.get(position).titleName); // put image data in Intent
             intent.putExtra("background", courseModelArrayList.get(position).drawable); // put image data in Intent

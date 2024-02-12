@@ -15,6 +15,9 @@
         android:theme="@style/Theme.Notifiaction"
         tools:targetApi="31">
         <activity
+            android:name=".QuestionScreen"
+            android:exported="false" />
+        <activity
             android:name=".QuizList"
             android:exported="false" />
         <activity
