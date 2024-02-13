@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardViewAnswer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="12dp"
+    android:layout_marginBottom="5dp"
+    app:cardCornerRadius="8dp"
+    tools:ignore="MissingConstraints">
+
+    <RadioButton
+        android:id="@+id/radioButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:layout_margin="4dp"
+        android:buttonTint="@color/darkblue"
+        android:fontFamily="@font/robotoslabregular"
+        android:layoutDirection="rtl"
+        android:padding="16dp"
+        android:textDirection="ltr"
+        android:text="San Fransisco"
+        android:textAlignment="textStart"
+        android:textSize="14sp"
+        android:textStyle="normal" />
+
+</androidx.cardview.widget.CardView>

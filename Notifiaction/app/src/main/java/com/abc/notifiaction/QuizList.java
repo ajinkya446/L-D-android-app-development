@@ -45,7 +45,7 @@ public class QuizList extends AppCompatActivity {
 
         linearLayout.setOnClickListener(v -> {
             Intent quizIntent = new Intent(getApplicationContext(), QuestionScreen.class);
-            Toast.makeText(this, "Quiz will start in 3 seconds", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "Quiz will start in 3 seconds", Toast.LENGTH_SHORT).show();
             quizIntent.putExtra("title", title); // put image data in Intent
             quizIntent.putExtra("background", background); // put image data in Intent
             startActivity(quizIntent);

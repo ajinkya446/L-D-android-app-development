@@ -6,7 +6,8 @@
     <color name="darkblue">#0B05F6</color>
     <color name="grey">#e0e0e0</color>
     <color name="darkgrey">#aeb0af</color>
-    <color name="red">#E44C21</color>
+    <color name="red">#EEFB0000</color>
     <color name="darkred">#EEE60B0B</color>
     <color name="faintred">#51EDE8E8</color>
+    <color name="verified">#05C60C</color>
 </resources>
