@@ -1,4 +1,4 @@
-package com.abc.notifiaction;
+package com.abc.notifiaction.interfaces;
 
 import android.view.View;
 

@@ -1,4 +1,4 @@
-package com.abc.notifiaction;
+package com.abc.notifiaction.views;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,11 +7,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
 
-import com.squareup.picasso.Picasso;
+import com.abc.notifiaction.R;
 
 import pl.droidsonroids.gif.GifImageView;
 

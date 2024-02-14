@@ -1,20 +1,14 @@
-package com.abc.notifiaction;
+package com.abc.notifiaction.views;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
-import android.window.OnBackInvokedDispatcher;
 
+import com.abc.notifiaction.R;
 import com.google.android.material.appbar.MaterialToolbar;
 
 public class QuizList extends AppCompatActivity {
@@ -44,7 +38,7 @@ public class QuizList extends AppCompatActivity {
         linearLayout.setBackgroundResource(background);
 
         linearLayout.setOnClickListener(v -> {
-            Intent quizIntent = new Intent(getApplicationContext(), QuestionScreen.class);
+            Intent quizIntent = new Intent(this, QuestionScreen.class);
 //            Toast.makeText(this, "Quiz will start in 3 seconds", Toast.LENGTH_SHORT).show();
             quizIntent.putExtra("title", title); // put image data in Intent
             quizIntent.putExtra("background", background); // put image data in Intent

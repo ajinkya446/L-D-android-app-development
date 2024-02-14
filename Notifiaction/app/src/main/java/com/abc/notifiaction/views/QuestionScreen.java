@@ -1,8 +1,8 @@
-package com.abc.notifiaction;
+package com.abc.notifiaction.views;
 
-import androidx.activity.OnBackPressedDispatcher;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -10,22 +10,20 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.abc.notifiaction.R;
 import com.abc.notifiaction.adapter.MCQAdapter;
+import com.abc.notifiaction.databinding.ActivityQuestionScreenBinding;
+import com.abc.notifiaction.interfaces.RecyclerViewInterface;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class QuestionScreen extends AppCompatActivity implements RecyclerViewInterface {
-    LinearLayout linearLayout;
-    TextView textViewLabel, textViewQuestion;
-    RecyclerView recyclerViewMCQ;
+    private ActivityQuestionScreenBinding activityQuestionScreenBinding;
 
     ArrayList<String> questionList = new ArrayList<>();
     String[] finalAnswer = {"Chambal", "Karnataka", "November 12", "25 years", "2019",
@@ -39,11 +37,7 @@ public class QuestionScreen extends AppCompatActivity implements RecyclerViewInt
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_question_screen);
-        linearLayout = findViewById(R.id.layout_button2);
-        textViewLabel = findViewById(R.id.questionLabel);
-        textViewQuestion = findViewById(R.id.question);
-        recyclerViewMCQ = findViewById(R.id.answerRecyclerview);
+        activityQuestionScreenBinding = DataBindingUtil.setContentView(this, R.layout.activity_question_screen);
 
         /// MCQ For Question 1
         ArrayList<String> answer1 = new ArrayList<>();
@@ -138,27 +132,43 @@ public class QuestionScreen extends AppCompatActivity implements RecyclerViewInt
         answersList.add(answer9);
         answersList.add(answer10);
         MCQAdapter mcqAdapter = new MCQAdapter(answersList.get(pageIndex), this, finalAnswer[pageIndex], this);
-        recyclerViewMCQ.setAdapter(mcqAdapter);
-        recyclerViewMCQ.setLayoutManager(new LinearLayoutManager(this));
+        activityQuestionScreenBinding.answerRecyclerview.setAdapter(mcqAdapter);
+        activityQuestionScreenBinding.answerRecyclerview.setLayoutManager(new LinearLayoutManager(this));
 
-        textViewLabel.setText("Question" + (pageIndex + 1) + " of 15");
-        textViewQuestion.setText(questionList.get(pageIndex));
+        activityQuestionScreenBinding.questionLabel.setText("Question " + (pageIndex + 1) + " of 10");
+        activityQuestionScreenBinding.question.setText(questionList.get(pageIndex));
         Intent intent = getIntent();
 
         String title = intent.getStringExtra("title");
         int background = intent.getIntExtra("background", 0);
-        linearLayout.setBackgroundResource(background);
-        linearLayout.setOnClickListener(v -> {
+
+        activityQuestionScreenBinding.layoutButton2.setBackgroundResource(background);
+        activityQuestionScreenBinding.layoutButton2.setOnClickListener(v -> {
             try {
-                if (pageIndex <= 9) {
-                    if (answersMap.get(pageIndex) != null) {
-                        pageIndex = pageIndex + 1;
-                        textViewLabel.setText("Question" + (pageIndex + 1) + " of 15");
-                        textViewQuestion.setText(questionList.get(pageIndex));
-                        MCQAdapter adapter = new MCQAdapter(answersList.get(pageIndex), this, finalAnswer[pageIndex], this);
-                        recyclerViewMCQ.setAdapter(adapter);
-                        recyclerViewMCQ.setLayoutManager(new LinearLayoutManager(this));
+
+                if (!answersMap.isEmpty()) {
+                    if (pageIndex < 9) {
+                        if (answersMap.get(pageIndex) != null) {
+                            pageIndex = pageIndex + 1;
+                            if (pageIndex == 9) {
+                                activityQuestionScreenBinding.btnNext.setText("Submit");
+                            }
+
+                            activityQuestionScreenBinding.questionLabel.setText("Question " + (pageIndex + 1) + " of 10");
+                            activityQuestionScreenBinding.question.setText(questionList.get(pageIndex));
+                            MCQAdapter adapter = new MCQAdapter(answersList.get(pageIndex), this, finalAnswer[pageIndex], this);
+                            activityQuestionScreenBinding.answerRecyclerview.setAdapter(adapter);
+                            activityQuestionScreenBinding.answerRecyclerview.setLayoutManager(new LinearLayoutManager(this));
+                        }
+
+                    }else{
+                        if (pageIndex == 9) {
+                            startActivity(new Intent(getApplicationContext(), RewardScreen.class));
+                            finish();
+                        }
                     }
+                } else {
+                    Toast.makeText(this, "Please select answer first", Toast.LENGTH_SHORT).show();
                 }
             } catch (Exception e) {
                 throw e;

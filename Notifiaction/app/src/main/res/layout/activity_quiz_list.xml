@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".QuizList">
+    tools:context=".views.QuizList">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
@@ -198,11 +198,9 @@
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_height="50dp"
+            android:gravity="center"
             android:fontFamily="@font/robotoslabregular"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
             android:text="@string/start_quiz"
             android:textAlignment="center"
             android:textColor="@color/white"

@@ -14,12 +14,9 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.abc.notifiaction.R;
-import com.abc.notifiaction.RecyclerViewInterface;
+import com.abc.notifiaction.interfaces.RecyclerViewInterface;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 public class MCQAdapter extends RecyclerView.Adapter<MCQAdapter.MCQViewHolder> {
     ArrayList<String> answersList;

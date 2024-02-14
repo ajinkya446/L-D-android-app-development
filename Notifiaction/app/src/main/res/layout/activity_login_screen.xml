@@ -6,7 +6,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".LoginScreen">
+        tools:context=".views.LoginScreen">
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline3"
@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/protestriotregular"
             android:text="@string/play_to_gain_your_knowledge"
-            android:textSize="28sp"
+            android:textSize="@dimen/title_text_size"
             app:layout_constraintBottom_toBottomOf="@id/guideline4"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
