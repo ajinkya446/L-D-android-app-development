@@ -15,6 +15,69 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/userImage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/social" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/userName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="16dp"
+                android:fontFamily="@font/robotoslabregular"
+                android:text="Ajinkya Aher"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="normal" />
+
+            <TextView
+                android:id="@+id/email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="16dp"
+                android:fontFamily="@font/protestriotregular"
+                android:text="ajinkya446@gmail.com"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="normal" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="30dp" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/theme"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:checked="true"
+        android:textSize="16sp"
+        android:textDirection="ltr"
+        android:fontFamily="@font/protestriotregular"
+        android:textColor="@color/white"
+        android:text="Theme"/>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="30dp" />
+
+    <LinearLayout
+        android:id="@+id/profile_menu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
@@ -27,6 +90,7 @@
             android:layout_gravity="center"
             android:layout_marginStart="16dp"
             android:text="Profile"
+            android:fontFamily="@font/robotoslabregular"
             android:textColor="@color/white"
             android:textSize="14sp"
             android:textStyle="normal|bold" />
@@ -37,6 +101,7 @@
         android:layout_height="30dp" />
 
     <LinearLayout
+        android:id="@+id/layoutSetting"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -51,8 +116,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:fontFamily="@font/robotoslabregular"
             android:layout_marginStart="16dp"
-            android:text="Profile"
+            android:text="Settings"
             android:textColor="@color/white"
             android:textSize="14sp"
             android:textStyle="normal|bold" />
@@ -62,7 +128,8 @@
         android:layout_width="match_parent"
         android:layout_height="30dp" />
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
+        android:id="@+id/exitMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -77,6 +144,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:fontFamily="@font/robotoslabregular"
             android:layout_marginStart="16dp"
             android:text="Logout"
             android:textColor="@color/white"

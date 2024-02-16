@@ -31,22 +31,9 @@
                     android:layout_height="?attr/actionBarSize"
                     android:backgroundTint="@color/darkblue"
                     app:navigationIcon="@drawable/menu"
-                    app:title="name">
+                    app:title="name"
+                    app:titleTextColor="@color/white">
 
-                    <RelativeLayout
-                        android:layout_width="50dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:layout_marginEnd="20dp">
-
-                        <de.hdodenhof.circleimageview.CircleImageView
-                            android:id="@+id/userImage"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:layout_alignParentEnd="true"
-                            android:src="@drawable/social"
-                            tools:ignore="MissingClass" />
-                    </RelativeLayout>
                 </com.google.android.material.appbar.MaterialToolbar>
             </com.google.android.material.appbar.AppBarLayout>
 
@@ -60,29 +47,29 @@
                 android:horizontalSpacing="8dp"
                 android:numColumns="2"
                 android:verticalSpacing="12dp"
-                app:layout_constraintBottom_toTopOf="@id/signOut"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
                 app:layout_constraintVertical_weight="1" />
-
-            <Button
-                android:id="@+id/signOut"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:elevation="10dp"
-                android:fontFamily="@font/robotoslabregular"
-                android:text="Sign Out"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textStyle="bold"
-                app:backgroundTint="@color/darkblue"
-                app:cornerRadius="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                tools:ignore="MissingConstraints" />
+            <!--
+                        <Button
+                            android:id="@+id/signOut"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:elevation="10dp"
+                            android:fontFamily="@font/robotoslabregular"
+                            android:text="Sign Out"
+                            android:textAllCaps="false"
+                            android:textColor="@color/white"
+                            android:textStyle="bold"
+                            app:backgroundTint="@color/darkblue"
+                            app:cornerRadius="8dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            tools:ignore="MissingConstraints" />-->
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -90,10 +77,10 @@
         <!-- this the navigation view which draws and shows the navigation drawer -->
         <!-- include the menu created in the menu folder -->
         <com.google.android.material.navigation.NavigationView
+            android:id="@+id/navView"
             android:background="@drawable/reward_bg"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_gravity="start"
-            app:headerLayout="@layout/drawer_layout"/>
+            android:layout_gravity="start" />
     </androidx.drawerlayout.widget.DrawerLayout>
 </layout>

@@ -28,20 +28,17 @@ public class SplashScreen extends AppCompatActivity {
 //        imageView.setImageResource(R.drawable.test);
 //        Picasso.get().load(R.drawable.test).into(imageView);
         /// Adding handler
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                SharedPreferences sharedPreferences = getSharedPreferences("shared_preference", MODE_PRIVATE);
-                boolean value = sharedPreferences.getBoolean("walkthrough", false);
-                Intent intent;
-                if (value) {
-                    intent = new Intent(SplashScreen.this, LoginScreen.class);
-                } else {
-                    intent = new Intent(SplashScreen.this, MainActivity.class);
-                }
-                startActivity(intent);
-                finish();
+        new Handler().postDelayed(() -> {
+            SharedPreferences sharedPreferences = getSharedPreferences("shared_preference", MODE_PRIVATE);
+            boolean value = sharedPreferences.getBoolean("walkthrough", false);
+            Intent intent;
+            if (value) {
+                intent = new Intent(SplashScreen.this, LoginScreen.class);
+            } else {
+                intent = new Intent(SplashScreen.this, MainActivity.class);
             }
+            startActivity(intent);
+            finish();
         }, 3000);
     }
 }
