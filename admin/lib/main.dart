@@ -13,7 +13,6 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
-import 'package:loading_indicator/loading_indicator.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
@@ -65,10 +64,11 @@ class _MyHomePageState extends State<MyHomePage> {
   TextEditingController chatController = TextEditingController();
   ChatResponse? chatResponseList;
   ValueNotifier<List<Map<String, dynamic>>> messageArray = ValueNotifier([]);
-  bool isAIOpened = false, isScroll = false, isLoading = false, isMicAvailable = false, listening = false;
+  bool isAIOpened = false, isScroll = false, isMicAvailable = false, listening = false;
   int _counter = 0;
   List<String> dropdownvalue = ['English'], tempLang = ['en'];
   List<bool> isTTSEnable = [false];
+  ValueNotifier<bool> isLoading = ValueNotifier(false);
 
   FlutterTts flutterTts = FlutterTts();
   var languageList = [
@@ -113,7 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.white,
-      appBar: AppBar(
+      /*appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         title: GestureDetector(
@@ -172,8 +172,8 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Container(
           height: double.maxFinite,
           child: ListView(
-            /* mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,*/
+            */ /* mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,*/ /*
             children: <Widget>[
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -222,8 +222,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     height: MediaQuery.of(context).size.height * 0.31,
                     child: ListView(
                       scrollDirection: Axis.horizontal,
-                      /* mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      crossAxisAlignment: CrossAxisAlignment.end,*/
+                      */ /* mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      crossAxisAlignment: CrossAxisAlignment.end,*/ /*
                       children: [
                         Container(
                           decoration: BoxDecoration(borderRadius: BorderRadius.circular(40), color: const Color(0xffFAFF00).withOpacity(0.4)),
@@ -333,7 +333,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ),
-      ),
+      ),*/
       floatingActionButton: (!isAIOpened)
           ? FloatingActionButton(
               backgroundColor: const Color(0xff2200FF),
@@ -356,7 +356,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: isLoading ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+                    crossAxisAlignment: /*isLoading ? CrossAxisAlignment.center :*/ CrossAxisAlignment.start,
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -385,69 +385,79 @@ class _MyHomePageState extends State<MyHomePage> {
                           )
                         ]),
                       ),
-                      isLoading
+                      ValueListenableBuilder(
+                          valueListenable: isLoading,
+                          builder: (newCtx, value, child) {
+                            return value
+                                ? Container(
+                                    child: new ProgressIndicatorDemo(),
+                                  )
+                                : Container();
+                          }),
+                      /*isLoading
                           ? const Center(
                               child: SizedBox(
                               height: 100,
                               width: 100,
                               child: LoadingIndicator(indicatorType: Indicator.ballScaleMultiple, colors: [Color(0xff2200FF), Colors.white], strokeWidth: 2, pathBackgroundColor: Color(0xff2200FF)),
                             ))
-                          : Expanded(child: getChatList()),
-                      isLoading
+                          :*/
+                      Expanded(child: getChatList()),
+                      /*isLoading
                           ? Container()
-                          : Align(
-                              alignment: Alignment.bottomCenter,
-                              child: Container(
-                                height: 70,
-                                padding: const EdgeInsets.symmetric(horizontal: 16),
-                                decoration: BoxDecoration(
-                                    borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(16), bottomRight: Radius.circular(16)),
-                                    border: Border.all(width: 1.5, color: const Color(0xff2200FF))),
-                                // margin: const EdgeInsets.symmetric(horizontal: 16),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    // InkWell(onTap: () {}, child: SvgPicture.asset("assets/images/attachment.svg", height: 18, width: 18)),
-                                    Expanded(
-                                      child: TextField(
-                                          controller: chatController,
-                                          onSubmitted: (value) {
-                                            if (kIsWeb) {
-                                              isScroll = true;
-                                              checkChatResponse();
-                                            }
-                                          },
-                                          decoration: const InputDecoration(
-                                              hintText: 'Your Message', border: InputBorder.none, contentPadding: EdgeInsets.all(16.0), hintStyle: TextStyle(color: Color(0xff2200FF))),
-                                          style: const TextStyle(color: Color(0xff2200FF))),
-                                    ),
-                                    InkWell(
-                                      onTap: () async {
-                                        html.window.navigator.getUserMedia(audio: true).then((value) async {
-                                          // listening = false;
-                                          try {
-                                            if (isMicAvailable) {
-                                              if (!isListening) {
-                                                listening = true;
-                                                speech.listen(onResult: _onSpeechResult, listenFor: const Duration(seconds: 20)).then((value) {
-                                                  Future.delayed(const Duration(seconds: 20), () {
-                                                    speech.stop();
-                                                    listening = false;
-                                                  });
-                                                });
-                                              } else {
-                                                listening = false;
-                                                speech.stop();
-                                              }
-                                              setState(() {});
-                                              return;
-                                            }
-                                          } catch (e) {
-                                            rethrow;
-                                          }
-                                        });
-                                        /*if (isMicAvailable) {
+                          :*/
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Container(
+                          height: 70,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(16), bottomRight: Radius.circular(16)), border: Border.all(width: 1.5, color: const Color(0xff2200FF))),
+                          // margin: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              // InkWell(onTap: () {}, child: SvgPicture.asset("assets/images/attachment.svg", height: 18, width: 18)),
+                              Expanded(
+                                child: TextField(
+                                    controller: chatController,
+                                    onSubmitted: (value) {
+                                      if (kIsWeb) {
+                                        isScroll = true;
+                                        checkChatResponse();
+                                      }
+                                    },
+                                    decoration:
+                                        const InputDecoration(hintText: 'Your Message', border: InputBorder.none, contentPadding: EdgeInsets.all(16.0), hintStyle: TextStyle(color: Color(0xff2200FF))),
+                                    style: const TextStyle(color: Color(0xff2200FF))),
+                              ),
+                              InkWell(
+                                onTap: () async {
+                                  html.window.navigator.getUserMedia(audio: true).then((value) async {
+                                    // listening = false;
+                                    try {
+                                      if (isMicAvailable) {
+                                        if (!isListening) {
+                                          listening = true;
+                                          speech.listen(onResult: _onSpeechResult, listenFor: const Duration(seconds: 20)).then((value) {
+                                            Future.delayed(const Duration(seconds: 20), () {
+                                              speech.stop();
+                                              listening = false;
+                                            });
+                                          });
+                                        } else {
+                                          listening = false;
+                                          speech.stop();
+                                        }
+                                        setState(() {});
+                                        return;
+                                      }
+                                    } catch (e) {
+                                      rethrow;
+                                    }
+                                  });
+                                  /*if (isMicAvailable) {
                                           if (!isListening) {
                                             listening = true;
                                             print("Enabled: Microphone");
@@ -460,21 +470,21 @@ class _MyHomePageState extends State<MyHomePage> {
                                           setState(() {});
                                           return;
                                         }*/
-                                      },
-                                      child: Icon(isListening ? Icons.mic_none_outlined : Icons.mic_off, size: 18.0, color: const Color(0xff2200FF)),
-                                    ),
-                                    const SizedBox(width: 20),
-                                    InkWell(
-                                      child: const Icon(Icons.send_outlined, size: 18.0, color: Color(0xff2200FF)),
-                                      onTap: () {
-                                        isScroll = true;
-                                        checkChatResponse();
-                                      },
-                                    ),
-                                  ],
-                                ),
+                                },
+                                child: Icon(isListening ? Icons.mic_none_outlined : Icons.mic_off, size: 18.0, color: const Color(0xff2200FF)),
                               ),
-                            )
+                              const SizedBox(width: 20),
+                              InkWell(
+                                child: const Icon(Icons.send_outlined, size: 18.0, color: Color(0xff2200FF)),
+                                onTap: () {
+                                  isScroll = true;
+                                  checkChatResponse();
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
                     ],
                   ),
                 ),
@@ -496,7 +506,7 @@ class _MyHomePageState extends State<MyHomePage> {
       if (chatResponseList != null) {
         chatResponseList = null;
       }
-      isLoading = true;
+      isLoading.value = true;
       messageArray.value.add({'chatbot': false, 'message': chatController.text});
       dropdownvalue.add("English");
       isTTSEnable.add(false);
@@ -505,7 +515,7 @@ class _MyHomePageState extends State<MyHomePage> {
       await collectChatResponse(chatController.text);
       chatController.clear();
       chatController.text = "";
-      isLoading = false;
+      isLoading.value = false;
       if (isScroll) {
         SchedulerBinding.instance.addPostFrameCallback((_) {
           scrollController.animateTo(scrollController.position.maxScrollExtent, duration: const Duration(milliseconds: 1), curve: Curves.fastOutSlowIn);
@@ -542,108 +552,109 @@ class _MyHomePageState extends State<MyHomePage> {
       shrinkWrap: true,
       itemBuilder: (ctx, index) {
         // GlobalKey newKey = GlobalKey(debugLabel: 'Key$index');
-        return isLoading
+        return /*isLoading
             ? Container()
-            : Align(
-                // key: newKey,
-                alignment: messageArray.value[index]['chatbot'] == true ? Alignment.centerLeft : Alignment.centerRight,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(color: messageArray.value[index]['chatbot'] == true ? Colors.white : Color(0xff2200FF).withOpacity(0.2), borderRadius: BorderRadius.circular(8)),
-                      child: Text(messageArray.value[index]['message'],
-                          style: GoogleFonts.ptSerif(
-                            textStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: messageArray.value[index]['chatbot'] == true ? Colors.black : Colors.white),
-                          )),
-                    ),
-                    messageArray.value[index]['chatbot'] == true
-                        ? Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: () async {
-                                    flutterTts.setSpeechRate(0.595);
-                                    await flutterTts.getVoices.then((value) => print("Voices:" + value.toString()));
-                                    flutterTts.setVoice({'name': 'Google हिन्दी', 'locale': 'en-US'});
-                                    setState(() {});
-                                    if (isTTSEnable[index]) {
-                                      await flutterTts.stop();
-                                      isTTSEnable[index] = false;
-                                    } else {
-                                      if (tempLang[index] == 'en') {
-                                        await flutterTts.speak(messageArray.value[index]['message']);
-                                      } else {
-                                        // String valueText = await convertMessage(index, messageItem[index]['message'], tempLang[index], 'hi', isVoiceActive: true);
-                                        await flutterTts.speak(messageArray.value[index]['message']);
-                                      }
-                                      await flutterTts.setVolume(100);
-                                      isTTSEnable[index] = true;
-                                    }
-                                    setState(() {});
-                                    flutterTts.setCompletionHandler(() async {
-                                      await flutterTts.stop();
-                                      setState(() {
-                                        isTTSEnable[index] = false;
-                                      });
-                                    });
-                                  },
-                                  child: Icon(
-                                    isTTSEnable[index] ? Icons.stop : Icons.headset_mic_sharp,
-                                    size: MediaQuery.of(context).size.height * 0.030,
-                                    color: const Color(0xff2200FF),
-                                  ),
-                                ),
-                                SizedBox(width: MediaQuery.of(context).size.height * 0.020),
-                                DropdownButton(
-                                  dropdownColor: Colors.white,
-                                  style: GoogleFonts.roboto(
-                                    textStyle: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.022, fontWeight: FontWeight.w600, color: const Color(0xff2200FF)),
-                                  ),
-                                  value: dropdownvalue[index],
-                                  icon: Icon(Icons.translate, size: MediaQuery.of(context).size.height * 0.030, color: const Color(0xff2200FF)),
-                                  items: languageList.map((String items) {
-                                    return DropdownMenuItem(value: items, child: Text(items));
-                                  }).toList(),
-                                  // After selecting the desired option,it will
-                                  // change button value to selected value
-                                  onChanged: (String? newValue) async {
-                                    setState(() {
-                                      isLoading = true;
-                                    });
-                                    String lang = newValue == 'English'
-                                        ? 'en'
-                                        : newValue == 'Hindi'
-                                            ? 'hi'
-                                            : newValue == 'Marathi'
-                                                ? 'mr'
-                                                : newValue == 'Odisha'
-                                                    ? 'or'
-                                                    : newValue == 'Bengali'
-                                                        ? 'bn'
-                                                        : '';
-                                    final messageConverted = await convertMessage(index, messageArray.value[index]['message'], tempLang[index], lang);
-                                    messageArray.value.removeAt(index);
-                                    messageArray.value.insert(index, {'chatbot': true, 'message': messageConverted});
-
-                                    setState(() {
-                                      dropdownvalue[index] = newValue ?? "";
-                                      tempLang[index] = lang;
-                                      isLoading = false;
-                                    });
-                                  },
-                                )
-                              ],
+            :*/
+            Align(
+          // key: newKey,
+          alignment: messageArray.value[index]['chatbot'] == true ? Alignment.centerLeft : Alignment.centerRight,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(color: messageArray.value[index]['chatbot'] == true ? Colors.white : Color(0xff2200FF).withOpacity(0.2), borderRadius: BorderRadius.circular(8)),
+                child: Text(messageArray.value[index]['message'],
+                    style: GoogleFonts.ptSerif(
+                      textStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: messageArray.value[index]['chatbot'] == true ? Colors.black : Colors.white),
+                    )),
+              ),
+              messageArray.value[index]['chatbot'] == true
+                  ? Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () async {
+                              flutterTts.setSpeechRate(0.595);
+                              await flutterTts.getVoices.then((value) => print("Voices:" + value.toString()));
+                              flutterTts.setVoice({'name': 'Google हिन्दी', 'locale': 'en-US'});
+                              setState(() {});
+                              if (isTTSEnable[index]) {
+                                await flutterTts.stop();
+                                isTTSEnable[index] = false;
+                              } else {
+                                if (tempLang[index] == 'en') {
+                                  await flutterTts.speak(messageArray.value[index]['message']);
+                                } else {
+                                  // String valueText = await convertMessage(index, messageItem[index]['message'], tempLang[index], 'hi', isVoiceActive: true);
+                                  await flutterTts.speak(messageArray.value[index]['message']);
+                                }
+                                await flutterTts.setVolume(100);
+                                isTTSEnable[index] = true;
+                              }
+                              setState(() {});
+                              flutterTts.setCompletionHandler(() async {
+                                await flutterTts.stop();
+                                setState(() {
+                                  isTTSEnable[index] = false;
+                                });
+                              });
+                            },
+                            child: Icon(
+                              isTTSEnable[index] ? Icons.stop : Icons.headset_mic_sharp,
+                              size: MediaQuery.of(context).size.height * 0.030,
+                              color: const Color(0xff2200FF),
                             ),
+                          ),
+                          SizedBox(width: MediaQuery.of(context).size.height * 0.020),
+                          DropdownButton(
+                            dropdownColor: Colors.white,
+                            style: GoogleFonts.roboto(
+                              textStyle: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.022, fontWeight: FontWeight.w600, color: const Color(0xff2200FF)),
+                            ),
+                            value: dropdownvalue[index],
+                            icon: Icon(Icons.translate, size: MediaQuery.of(context).size.height * 0.030, color: const Color(0xff2200FF)),
+                            items: languageList.map((String items) {
+                              return DropdownMenuItem(value: items, child: Text(items));
+                            }).toList(),
+                            // After selecting the desired option,it will
+                            // change button value to selected value
+                            onChanged: (String? newValue) async {
+                              // setState(() {
+                              isLoading.value = true;
+                              // });
+                              String lang = newValue == 'English'
+                                  ? 'en'
+                                  : newValue == 'Hindi'
+                                      ? 'hi'
+                                      : newValue == 'Marathi'
+                                          ? 'mr'
+                                          : newValue == 'Odisha'
+                                              ? 'or'
+                                              : newValue == 'Bengali'
+                                                  ? 'bn'
+                                                  : '';
+                              final messageConverted = await convertMessage(index, messageArray.value[index]['message'], tempLang[index], lang);
+                              messageArray.value.removeAt(index);
+                              messageArray.value.insert(index, {'chatbot': true, 'message': messageConverted});
+
+                              setState(() {
+                                dropdownvalue[index] = newValue ?? "";
+                                tempLang[index] = lang;
+                                isLoading.value = false;
+                              });
+                            },
                           )
-                        : Container()
-                  ],
-                ),
-              );
+                        ],
+                      ),
+                    )
+                  : Container()
+            ],
+          ),
+        );
       },
     );
   }
@@ -693,4 +704,46 @@ class MyCustomScrollBehavior extends MaterialScrollBehavior {
         PointerDeviceKind.touch,
         PointerDeviceKind.mouse,
       };
+}
+
+class ProgressIndicatorDemo extends StatefulWidget {
+  const ProgressIndicatorDemo({super.key});
+
+  @override
+  _ProgressIndicatorDemoState createState() => new _ProgressIndicatorDemoState();
+}
+
+class _ProgressIndicatorDemoState extends State<ProgressIndicatorDemo> with SingleTickerProviderStateMixin {
+  late AnimationController controller;
+  late Animation<double> animation;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = AnimationController(duration: const Duration(milliseconds: 2000), vsync: this);
+    animation = Tween(begin: 0.0, end: 1.0).animate(controller)
+      ..addListener(() {
+        setState(() {
+          // the state that has changed here is the animation object’s value
+        });
+      });
+    controller.repeat();
+  }
+
+  @override
+  void dispose() {
+    controller.stop();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+        child: Container(
+      child: LinearProgressIndicator(
+        value: animation.value,
+        color: const Color(0xff2200FF),
+      ),
+    ));
+  }
 }
