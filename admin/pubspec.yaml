@@ -39,7 +39,12 @@ dependencies:
   firebase:
   cloud_firestore:
   google_fonts: any
-
+  http:
+  sqlite3:
+  flutter_tts:
+  speech_to_text:
+  loading_indicator:
+  permission_handler:
 
 dev_dependencies:
   flutter_test:
