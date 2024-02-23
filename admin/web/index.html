@@ -20,6 +20,7 @@
     <meta charset="UTF-8">
     <meta content="IE=Edge" http-equiv="X-UA-Compatible">
     <meta name="description" content="A new Flutter project.">
+    <meta http-equiv="Content-Security-Policy" content="microphone 'self'">
 
     <!-- iOS meta tags & icons -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -77,10 +78,27 @@
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
 
+
+    </script>
+    <script type="application/javascript">
+         async function myJavaScriptFunction(message) {
+            // This function is invoked from Flutter
+            console.log('JavaScript function invoked with message:', message);
+            // Call the callback function defined in Flutter
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            console.log('Flutter callback stream with message:', stream);
+            myFlutterCallback(stream);
+        }
+
+        async function myFlutterCallback(message) {
+            console.log('Flutter callback invoked with message:', message);
+        }
+
     </script>
 </head>
 
 <body>
+<script src="main.dart.js" type="application/javascript"></script>
 <script>
     window.addEventListener('load', function (ev) {
       // Download main.dart.js
@@ -98,6 +116,7 @@
 
 
 </script>
+
 </body>
 
 </html>
