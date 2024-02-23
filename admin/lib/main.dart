@@ -68,11 +68,11 @@ class _MyHomePageState extends State<MyHomePage> {
   ChatResponse? chatResponseList;
   ValueNotifier<List<Map<String, dynamic>>> messageArray = ValueNotifier([]);
   bool isAIOpened = false, isScroll = false, isMicAvailable = false, listening = false;
-  int _counter = 0;
   List<String> dropdownvalue = ['English'], tempLang = ['en'];
   List<bool> isTTSEnable = [false];
   ValueNotifier<bool> isLoading = ValueNotifier(false);
-  bool isGetCall = false;
+  bool isGetCall = false, isDataFound = false;
+  FirebaseFirestore fireStore = FirebaseFirestore.instance;
 
   FlutterTts flutterTts = FlutterTts();
   var languageList = [
@@ -104,14 +104,14 @@ class _MyHomePageState extends State<MyHomePage> {
     flutterTts.stop();
   }
 
-  void _incrementCounter() {
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
-    CollectionReference users = firestore.collection('userdata');
-    users.add({'name': "Ajinkya $_counter"}).then((value) => print("User Added")).catchError((error) => print("Failed to add user: $error"));
-    setState(() {
-      _counter++;
-    });
-  }
+  //
+  // void _incrementCounter() {
+  //   CollectionReference users = fireStore.collection('userdata');
+  //   users.add({'name': "Ajinkya $_counter"}).then((value) => print("User Added")).catchError((error) => print("Failed to add user: $error"));
+  //   setState(() {
+  //     _counter++;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -657,11 +657,15 @@ class _MyHomePageState extends State<MyHomePage> {
       dropdownvalue.add("English");
       isTTSEnable.add(false);
       tempLang.add("en");
+      await getFirebaseDetails();
       setState(() {});
-      await collectChatResponse(chatController.text);
+      if (!isDataFound) {
+        await collectChatResponse(chatController.text);
+      }
       chatController.clear();
       chatController.text = "";
       isLoading.value = false;
+      isDataFound = false;
       if (isScroll) {
         SchedulerBinding.instance.addPostFrameCallback((_) {
           scrollController.animateTo(scrollController.position.maxScrollExtent, duration: const Duration(milliseconds: 1), curve: Curves.fastOutSlowIn);
@@ -673,6 +677,23 @@ class _MyHomePageState extends State<MyHomePage> {
 
   ScrollController scrollController = ScrollController();
 
+  Future getFirebaseDetails() async {
+    final response = await FirebaseFirestore.instance.collection('chatbot_response').get();
+    for (int i = 0; i < response.docs.length; i++) {
+      if (!isDataFound) {
+        final details = response.docs[i].data();
+        if (chatController.text.toString().toLowerCase() == details['user_message'].toString().toLowerCase()) {
+          dropdownvalue.add("English");
+          tempLang.add("en");
+          isTTSEnable.add(false);
+          isDataFound = true;
+          messageArray.value.add({'chatbot': true, 'message': details['message'] ?? ''});
+          break;
+        }
+      }
+    }
+  }
+
   Future collectChatResponse(String question) async {
     try {
       final body = {'language': 'English', 'question': question};
@@ -682,6 +703,7 @@ class _MyHomePageState extends State<MyHomePage> {
         dropdownvalue.add("English");
         tempLang.add("en");
         isTTSEnable.add(false);
+        await saveMessageDetails(chatResponseList?.answer ?? '', question);
         messageArray.value.add({'chatbot': true, 'message': chatResponseList?.answer ?? ''});
         setState(() {});
       }
@@ -798,6 +820,13 @@ class _MyHomePageState extends State<MyHomePage> {
         );
       },
     );
+  }
+
+  Future saveMessageDetails(String messageText, String userMessage) async {
+    CollectionReference users = fireStore.collection('chatbot_response');
+    await users.add({'chatbot': true, "message": messageText, 'user_message': userMessage}).catchError((error) {
+      print("Failed to add user: $error");
+    });
   }
 
   Future convertMessage(int index, String textMessage, String selectedLang, String targetLang, {bool? isVoiceActive = false}) async {
