@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:html' as html;
+import 'dart:js' as js;
 
 import 'package:admin/aboutus_screen.dart';
 import 'package:admin/chat_response_model.dart';
@@ -13,13 +14,14 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
-import 'package:loading_indicator/loading_indicator.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 import 'contact_us_screen.dart';
 
 void main() async {
+  // Register a callback function that can be invoked from JavaScript
+
   WidgetsFlutterBinding.ensureInitialized();
   if (kIsWeb) {
     setUrlStrategy(PathUrlStrategy());
@@ -46,7 +48,7 @@ class MyApp extends StatelessWidget {
         '/contact': (context) => const ContactScreen(),
       },
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: ThemeData(primarySwatch: Colors.blue, hoverColor: Colors.transparent, splashColor: Colors.transparent),
       // home: const MyHomePage(),
     );
   }
@@ -65,10 +67,12 @@ class _MyHomePageState extends State<MyHomePage> {
   TextEditingController chatController = TextEditingController();
   ChatResponse? chatResponseList;
   ValueNotifier<List<Map<String, dynamic>>> messageArray = ValueNotifier([]);
-  bool isAIOpened = false, isScroll = false, isLoading = false, isMicAvailable = false, listening = false;
-  int _counter = 0;
+  bool isAIOpened = false, isScroll = false, isMicAvailable = false, listening = false;
   List<String> dropdownvalue = ['English'], tempLang = ['en'];
   List<bool> isTTSEnable = [false];
+  ValueNotifier<bool> isLoading = ValueNotifier(false);
+  bool isGetCall = false, isDataFound = false;
+  FirebaseFirestore fireStore = FirebaseFirestore.instance;
 
   FlutterTts flutterTts = FlutterTts();
   var languageList = [
@@ -85,6 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    js.context['myFlutterCallback'] = myFlutterCallback;
     initialiseMic();
   }
 
@@ -99,28 +104,152 @@ class _MyHomePageState extends State<MyHomePage> {
     flutterTts.stop();
   }
 
-  void _incrementCounter() {
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
-    CollectionReference users = firestore.collection('userdata');
-    users.add({'name': "Ajinkya $_counter"}).then((value) => print("User Added")).catchError((error) => print("Failed to add user: $error"));
-    setState(() {
-      _counter++;
-    });
-  }
+  //
+  // void _incrementCounter() {
+  //   CollectionReference users = fireStore.collection('userdata');
+  //   users.add({'name': "Ajinkya $_counter"}).then((value) => print("User Added")).catchError((error) => print("Failed to add user: $error"));
+  //   setState(() {
+  //     _counter++;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.white,
-      appBar: AppBar(
+      body: /*Align(
+        alignment: Alignment.bottomRight,
+        child:*/
+          Container(
+        margin: const EdgeInsets.only(right: 16),
+        height: double.maxFinite,
+        width: double.maxFinite,
+        child: Card(
+          elevation: 8,
+          color: Colors.grey.shade200,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: /*isLoading ? CrossAxisAlignment.center :*/ CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                height: 80,
+                decoration: const BoxDecoration(
+                  // border: Border(bottom: BorderSide(color: Colors.black)),
+                  borderRadius: BorderRadius.only(topRight: Radius.circular(24), topLeft: Radius.circular(24)),
+                  color: Colors.white,
+                ),
+                child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+                  Image.asset("assets/images/chatbot.png", height: 30),
+                  const SizedBox(width: 70),
+                  Text('Chatbot Support',
+                      style: GoogleFonts.poppins(
+                        textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: Colors.black),
+                      )),
+                  // IconButton(
+                  //   onPressed: () {
+                  //     setState(() {
+                  //       isAIOpened = false;
+                  //     });
+                  //   },
+                  //   icon: const Icon(Icons.close, color: Colors.white, size: 20),
+                  // )
+                ]),
+              ),
+              ValueListenableBuilder(
+                  valueListenable: isLoading,
+                  builder: (newCtx, value, child) {
+                    return value
+                        ? Container(
+                            child: const ProgressIndicatorDemo(),
+                          )
+                        : Container();
+                  }),
+              Expanded(child: getChatList()),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  height: 70,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(16), bottomRight: Radius.circular(16)), border: Border.all(width: 1.5, color: const Color(0xff2200FF))),
+                  // margin: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      // InkWell(onTap: () {}, child: SvgPicture.asset("assets/images/attachment.svg", height: 18, width: 18)),
+                      Expanded(
+                        child: TextField(
+                            controller: chatController,
+                            onSubmitted: (value) {
+                              if (kIsWeb) {
+                                isScroll = true;
+                                checkChatResponse();
+                              }
+                            },
+                            decoration: const InputDecoration(hintText: 'Your Message', border: InputBorder.none, contentPadding: EdgeInsets.all(16.0), hintStyle: TextStyle(color: Color(0xff2200FF))),
+                            style: const TextStyle(color: Color(0xff2200FF))),
+                      ),
+                      InkWell(
+                        onTap: () async {
+                          print("Called Permission");
+                          js.context.callMethod('myJavaScriptFunction', ['Hello from Flutter']);
+                          if (!isGetCall) {
+                            html.window.navigator.getUserMedia(audio: true).then((value) async {
+                              // listening = false;
+                              try {
+                                if (isMicAvailable) {
+                                  if (!isListening) {
+                                    listening = true;
+                                    speech.listen(onResult: _onSpeechResult, listenFor: const Duration(seconds: 20)).then((value) {
+                                      Future.delayed(const Duration(seconds: 20), () {
+                                        speech.stop();
+                                        listening = false;
+                                      });
+                                    });
+                                  } else {
+                                    listening = false;
+                                    speech.stop();
+                                  }
+                                  setState(() {});
+                                  return;
+                                }
+                              } catch (e) {
+                                rethrow;
+                              }
+                            });
+                          }
+                        },
+                        child: Icon(isListening ? Icons.mic_none_outlined : Icons.mic_off, size: 18.0, color: const Color(0xff2200FF)),
+                      ),
+                      const SizedBox(width: 20),
+                      InkWell(
+                        child: const Icon(Icons.send_outlined, size: 18.0, color: Color(0xff2200FF)),
+                        onTap: () {
+                          isScroll = true;
+                          checkChatResponse();
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+        // ),
+      ),
+      /*appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         title: GestureDetector(
           onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (ctx) => const MyHomePage())),
           child: Text(
             "Kwizee",
-            style: GoogleFonts.ptSerif(
+            style: GoogleFonts.poppins(
               textStyle: const TextStyle(fontSize: 34, color: Color(0xff2200FF), fontWeight: FontWeight.bold, letterSpacing: .5),
             ),
           ),
@@ -132,7 +261,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: TextButton(
                       onPressed: () => Navigator.pushReplacementNamed(context, '/about'),
                       child: Text("About Us",
-                          style: GoogleFonts.ptSerif(
+                          style: GoogleFonts.poppins(
                             textStyle: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.020, fontWeight: FontWeight.w600, color: const Color(0xff2200FF), letterSpacing: .5),
                           ))),
                 ),
@@ -141,7 +270,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: TextButton(
                       onPressed: () {},
                       child: Text("Quiz",
-                          style: GoogleFonts.ptSerif(
+                          style: GoogleFonts.poppins(
                             textStyle: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.020, fontWeight: FontWeight.w600, color: const Color(0xff2200FF), letterSpacing: .5),
                           ))),
                 ),
@@ -150,7 +279,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: TextButton(
                       onPressed: () {},
                       child: Text("Contact",
-                          style: GoogleFonts.ptSerif(
+                          style: GoogleFonts.poppins(
                             textStyle: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.020, fontWeight: FontWeight.w600, color: const Color(0xff2200FF), letterSpacing: .5),
                           ))),
                 ),
@@ -172,8 +301,8 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Container(
           height: double.maxFinite,
           child: ListView(
-            /* mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,*/
+            */ /* mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,*/ /*
             children: <Widget>[
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -222,8 +351,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     height: MediaQuery.of(context).size.height * 0.31,
                     child: ListView(
                       scrollDirection: Axis.horizontal,
-                      /* mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      crossAxisAlignment: CrossAxisAlignment.end,*/
+                      */ /* mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      crossAxisAlignment: CrossAxisAlignment.end,*/ /*
                       children: [
                         Container(
                           decoration: BoxDecoration(borderRadius: BorderRadius.circular(40), color: const Color(0xffFAFF00).withOpacity(0.4)),
@@ -333,153 +462,152 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ),
-      ),
-      floatingActionButton: (!isAIOpened)
-          ? FloatingActionButton(
-              backgroundColor: const Color(0xff2200FF),
-              onPressed: () {
-                setState(() {
-                  isAIOpened = true;
-                });
-              } /*_incrementCounter*/,
-              child: Image.asset("assets/images/chatbot.png", height: 30) /* const Icon(Icons.add)*/,
-            )
-          : Align(
-              alignment: Alignment.bottomRight,
-              child: Container(
-                margin: const EdgeInsets.only(right: 16),
-                height: MediaQuery.of(context).size.height * 0.700,
-                width: MediaQuery.of(context).size.width * 0.300,
-                child: Card(
-                  elevation: 8,
-                  color: Colors.grey.shade200,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: isLoading ? CrossAxisAlignment.center : CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        height: MediaQuery.of(context).size.height * 0.10,
-                        decoration: const BoxDecoration(
-                          // border: Border(bottom: BorderSide(color: Colors.black)),
-                          borderRadius: BorderRadius.only(topRight: Radius.circular(24), topLeft: Radius.circular(24)),
-                          color: Color(0xff2200FF),
-                        ),
-                        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                          Image.asset("assets/images/chatbot.png", height: 30),
-                          Text('Chatbot Support',
-                              style: GoogleFonts.ptSerif(
-                                textStyle: TextStyle(
-                                    fontSize: (MediaQuery.of(context).size.width > 500) ? MediaQuery.of(context).size.height * 0.022 : MediaQuery.of(context).size.height * 0.018,
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.white),
-                              )),
-                          IconButton(
-                            onPressed: () {
-                              setState(() {
-                                isAIOpened = false;
-                              });
-                            },
-                            icon: const Icon(Icons.close, color: Colors.white, size: 20),
-                          )
-                        ]),
-                      ),
-                      isLoading
-                          ? const Center(
-                              child: SizedBox(
-                              height: 100,
-                              width: 100,
-                              child: LoadingIndicator(indicatorType: Indicator.ballScaleMultiple, colors: [Color(0xff2200FF), Colors.white], strokeWidth: 2, pathBackgroundColor: Color(0xff2200FF)),
-                            ))
-                          : Expanded(child: getChatList()),
-                      isLoading
-                          ? Container()
-                          : Align(
-                              alignment: Alignment.bottomCenter,
-                              child: Container(
-                                height: 70,
-                                padding: const EdgeInsets.symmetric(horizontal: 16),
-                                decoration: BoxDecoration(
-                                    borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(16), bottomRight: Radius.circular(16)),
-                                    border: Border.all(width: 1.5, color: const Color(0xff2200FF))),
-                                // margin: const EdgeInsets.symmetric(horizontal: 16),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    // InkWell(onTap: () {}, child: SvgPicture.asset("assets/images/attachment.svg", height: 18, width: 18)),
-                                    Expanded(
-                                      child: TextField(
-                                          controller: chatController,
-                                          onSubmitted: (value) {
-                                            if (kIsWeb) {
-                                              isScroll = true;
-                                              checkChatResponse();
-                                            }
-                                          },
-                                          decoration: const InputDecoration(
-                                              hintText: 'Your Message', border: InputBorder.none, contentPadding: EdgeInsets.all(16.0), hintStyle: TextStyle(color: Color(0xff2200FF))),
-                                          style: const TextStyle(color: Color(0xff2200FF))),
-                                    ),
-                                    InkWell(
-                                      onTap: () async {
-                                        html.window.navigator.getUserMedia(audio: true).then((value) async {
-                                          // listening = false;
-                                          try {
-                                            if (isMicAvailable) {
-                                              if (!isListening) {
-                                                listening = true;
-                                                speech.listen(onResult: _onSpeechResult, listenFor: const Duration(seconds: 20)).then((value) {
-                                                  Future.delayed(const Duration(seconds: 20), () {
-                                                    speech.stop();
-                                                    listening = false;
-                                                  });
-                                                });
-                                              } else {
-                                                listening = false;
-                                                speech.stop();
-                                              }
-                                              setState(() {});
-                                              return;
-                                            }
-                                          } catch (e) {
-                                            rethrow;
-                                          }
-                                        });
-                                        /*if (isMicAvailable) {
-                                          if (!isListening) {
-                                            listening = true;
-                                            print("Enabled: Microphone");
-                                            speech.listen(onResult: _onSpeechResult).whenComplete(() => speech.stop());
-                                          } else {
-                                            listening = false;
-                                            speech.stop();
-                                            print("Stopped: Microphone  Stopped");
-                                          }
-                                          setState(() {});
-                                          return;
-                                        }*/
-                                      },
-                                      child: Icon(isListening ? Icons.mic_none_outlined : Icons.mic_off, size: 18.0, color: const Color(0xff2200FF)),
-                                    ),
-                                    const SizedBox(width: 20),
-                                    InkWell(
-                                      child: const Icon(Icons.send_outlined, size: 18.0, color: Color(0xff2200FF)),
-                                      onTap: () {
-                                        isScroll = true;
-                                        checkChatResponse();
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                    ],
-                  ),
-                ),
-              ),
-            ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),*/
+      // floatingActionButton: (!isAIOpened)
+      //     ? FloatingActionButton(
+      //         backgroundColor: const Color(0xff2200FF),
+      //         onPressed: () {
+      //           setState(() {
+      //             isAIOpened = true;
+      //           });
+      //         } /*_incrementCounter*/,
+      //         child: Image.asset("assets/images/chatbot.png", height: 30) /* const Icon(Icons.add)*/,
+      //       )
+      //     : Align(
+      //         alignment: Alignment.bottomRight,
+      //         child: Container(
+      //           margin: const EdgeInsets.only(right: 16),
+      //           height: MediaQuery.of(context).size.height * 0.700,
+      //           width: MediaQuery.of(context).size.width * 0.300,
+      //           child: Card(
+      //             elevation: 8,
+      //             color: Colors.grey.shade200,
+      //             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      //             child: Column(
+      //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //               crossAxisAlignment: /*isLoading ? CrossAxisAlignment.center :*/ CrossAxisAlignment.start,
+      //               children: [
+      //                 Container(
+      //                   padding: const EdgeInsets.symmetric(horizontal: 16),
+      //                   height: MediaQuery.of(context).size.height * 0.10,
+      //                   decoration: const BoxDecoration(
+      //                     // border: Border(bottom: BorderSide(color: Colors.black)),
+      //                     borderRadius: BorderRadius.only(topRight: Radius.circular(24), topLeft: Radius.circular(24)),
+      //                     color: Color(0xff2200FF),
+      //                   ),
+      //                   child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      //                     Image.asset("assets/images/chatbot.png", height: 30),
+      //                     Text('Chatbot Support',
+      //                         style: GoogleFonts.poppins(
+      //                           textStyle: TextStyle(
+      //                               fontSize: (MediaQuery.of(context).size.width > 500) ? MediaQuery.of(context).size.height * 0.022 : MediaQuery.of(context).size.height * 0.018,
+      //                               fontWeight: FontWeight.w700,
+      //                               color: Colors.white),
+      //                         )),
+      //                     IconButton(
+      //                       onPressed: () {
+      //                         setState(() {
+      //                           isAIOpened = false;
+      //                         });
+      //                       },
+      //                       icon: const Icon(Icons.close, color: Colors.white, size: 20),
+      //                     )
+      //                   ]),
+      //                 ),
+      //                 ValueListenableBuilder(
+      //                     valueListenable: isLoading,
+      //                     builder: (newCtx, value, child) {
+      //                       return value
+      //                           ? Container(
+      //                               child: new ProgressIndicatorDemo(),
+      //                             )
+      //                           : Container();
+      //                     }),
+      //                 Expanded(child: getChatList()),
+      //                 Align(
+      //                   alignment: Alignment.bottomCenter,
+      //                   child: Container(
+      //                     height: 70,
+      //                     padding: const EdgeInsets.symmetric(horizontal: 16),
+      //                     decoration: BoxDecoration(
+      //                         borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(16), bottomRight: Radius.circular(16)), border: Border.all(width: 1.5, color: const Color(0xff2200FF))),
+      //                     // margin: const EdgeInsets.symmetric(horizontal: 16),
+      //                     child: Row(
+      //                       mainAxisAlignment: MainAxisAlignment.center,
+      //                       mainAxisSize: MainAxisSize.max,
+      //                       children: [
+      //                         // InkWell(onTap: () {}, child: SvgPicture.asset("assets/images/attachment.svg", height: 18, width: 18)),
+      //                         Expanded(
+      //                           child: TextField(
+      //                               controller: chatController,
+      //                               onSubmitted: (value) {
+      //                                 if (kIsWeb) {
+      //                                   isScroll = true;
+      //                                   checkChatResponse();
+      //                                 }
+      //                               },
+      //                               decoration:
+      //                                   const InputDecoration(hintText: 'Your Message', border: InputBorder.none, contentPadding: EdgeInsets.all(16.0), hintStyle: TextStyle(color: Color(0xff2200FF))),
+      //                               style: const TextStyle(color: Color(0xff2200FF))),
+      //                         ),
+      //                         InkWell(
+      //                           onTap: () async {
+      //                             html.window.navigator.getUserMedia(audio: true).then((value) async {
+      //                               // listening = false;
+      //                               try {
+      //                                 if (isMicAvailable) {
+      //                                   if (!isListening) {
+      //                                     listening = true;
+      //                                     speech.listen(onResult: _onSpeechResult, listenFor: const Duration(seconds: 20)).then((value) {
+      //                                       Future.delayed(const Duration(seconds: 20), () {
+      //                                         speech.stop();
+      //                                         listening = false;
+      //                                       });
+      //                                     });
+      //                                   } else {
+      //                                     listening = false;
+      //                                     speech.stop();
+      //                                   }
+      //                                   setState(() {});
+      //                                   return;
+      //                                 }
+      //                               } catch (e) {
+      //                                 rethrow;
+      //                               }
+      //                             });
+      //                             /*if (isMicAvailable) {
+      //                                     if (!isListening) {
+      //                                       listening = true;
+      //                                       print("Enabled: Microphone");
+      //                                       speech.listen(onResult: _onSpeechResult).whenComplete(() => speech.stop());
+      //                                     } else {
+      //                                       listening = false;
+      //                                       speech.stop();
+      //                                       print("Stopped: Microphone  Stopped");
+      //                                     }
+      //                                     setState(() {});
+      //                                     return;
+      //                                   }*/
+      //                           },
+      //                           child: Icon(isListening ? Icons.mic_none_outlined : Icons.mic_off, size: 18.0, color: const Color(0xff2200FF)),
+      //                         ),
+      //                         const SizedBox(width: 20),
+      //                         InkWell(
+      //                           child: const Icon(Icons.send_outlined, size: 18.0, color: Color(0xff2200FF)),
+      //                           onTap: () {
+      //                             isScroll = true;
+      //                             checkChatResponse();
+      //                           },
+      //                         ),
+      //                       ],
+      //                     ),
+      //                   ),
+      //                 )
+      //               ],
+      //             ),
+      //           ),
+      //         ),
+      //       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 
@@ -491,21 +619,53 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void myFlutterCallback(String message) {
+    isGetCall = true;
+    print('Callback invoked with message: $message');
+    html.window.navigator.getUserMedia(audio: true).then((value) async {
+      // listening = false;
+      try {
+        if (isMicAvailable) {
+          if (!isListening) {
+            listening = true;
+            speech.listen(onResult: _onSpeechResult, listenFor: const Duration(seconds: 20)).then((value) {
+              Future.delayed(const Duration(seconds: 20), () {
+                speech.stop();
+                listening = false;
+              });
+            });
+          } else {
+            listening = false;
+            speech.stop();
+          }
+          setState(() {});
+          return;
+        }
+      } catch (e) {
+        rethrow;
+      }
+    });
+  }
+
   Future checkChatResponse() async {
     if (chatController.text.isNotEmpty) {
       if (chatResponseList != null) {
         chatResponseList = null;
       }
-      isLoading = true;
+      isLoading.value = true;
       messageArray.value.add({'chatbot': false, 'message': chatController.text});
       dropdownvalue.add("English");
       isTTSEnable.add(false);
       tempLang.add("en");
+      await getFirebaseDetails();
       setState(() {});
-      await collectChatResponse(chatController.text);
+      if (!isDataFound) {
+        await collectChatResponse(chatController.text);
+      }
       chatController.clear();
       chatController.text = "";
-      isLoading = false;
+      isLoading.value = false;
+      isDataFound = false;
       if (isScroll) {
         SchedulerBinding.instance.addPostFrameCallback((_) {
           scrollController.animateTo(scrollController.position.maxScrollExtent, duration: const Duration(milliseconds: 1), curve: Curves.fastOutSlowIn);
@@ -517,6 +677,23 @@ class _MyHomePageState extends State<MyHomePage> {
 
   ScrollController scrollController = ScrollController();
 
+  Future getFirebaseDetails() async {
+    final response = await FirebaseFirestore.instance.collection('chatbot_response').get();
+    for (int i = 0; i < response.docs.length; i++) {
+      if (!isDataFound) {
+        final details = response.docs[i].data();
+        if (chatController.text.toString().toLowerCase() == details['user_message'].toString().toLowerCase()) {
+          dropdownvalue.add("English");
+          tempLang.add("en");
+          isTTSEnable.add(false);
+          isDataFound = true;
+          messageArray.value.add({'chatbot': true, 'message': details['message'] ?? ''});
+          break;
+        }
+      }
+    }
+  }
+
   Future collectChatResponse(String question) async {
     try {
       final body = {'language': 'English', 'question': question};
@@ -526,6 +703,7 @@ class _MyHomePageState extends State<MyHomePage> {
         dropdownvalue.add("English");
         tempLang.add("en");
         isTTSEnable.add(false);
+        await saveMessageDetails(chatResponseList?.answer ?? '', question);
         messageArray.value.add({'chatbot': true, 'message': chatResponseList?.answer ?? ''});
         setState(() {});
       }
@@ -541,111 +719,114 @@ class _MyHomePageState extends State<MyHomePage> {
       itemCount: messageArray.value.length,
       shrinkWrap: true,
       itemBuilder: (ctx, index) {
-        // GlobalKey newKey = GlobalKey(debugLabel: 'Key$index');
-        return isLoading
-            ? Container()
-            : Align(
-                // key: newKey,
-                alignment: messageArray.value[index]['chatbot'] == true ? Alignment.centerLeft : Alignment.centerRight,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(color: messageArray.value[index]['chatbot'] == true ? Colors.white : Color(0xff2200FF).withOpacity(0.2), borderRadius: BorderRadius.circular(8)),
-                      child: Text(messageArray.value[index]['message'],
-                          style: GoogleFonts.ptSerif(
-                            textStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: messageArray.value[index]['chatbot'] == true ? Colors.black : Colors.white),
-                          )),
-                    ),
-                    messageArray.value[index]['chatbot'] == true
-                        ? Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: () async {
-                                    flutterTts.setSpeechRate(0.595);
-                                    await flutterTts.getVoices.then((value) => print("Voices:" + value.toString()));
-                                    flutterTts.setVoice({'name': 'Google हिन्दी', 'locale': 'en-US'});
-                                    setState(() {});
-                                    if (isTTSEnable[index]) {
-                                      await flutterTts.stop();
-                                      isTTSEnable[index] = false;
-                                    } else {
-                                      if (tempLang[index] == 'en') {
-                                        await flutterTts.speak(messageArray.value[index]['message']);
-                                      } else {
-                                        // String valueText = await convertMessage(index, messageItem[index]['message'], tempLang[index], 'hi', isVoiceActive: true);
-                                        await flutterTts.speak(messageArray.value[index]['message']);
-                                      }
-                                      await flutterTts.setVolume(100);
-                                      isTTSEnable[index] = true;
-                                    }
-                                    setState(() {});
-                                    flutterTts.setCompletionHandler(() async {
-                                      await flutterTts.stop();
-                                      setState(() {
-                                        isTTSEnable[index] = false;
-                                      });
-                                    });
-                                  },
-                                  child: Icon(
-                                    isTTSEnable[index] ? Icons.stop : Icons.headset_mic_sharp,
-                                    size: MediaQuery.of(context).size.height * 0.030,
-                                    color: const Color(0xff2200FF),
-                                  ),
-                                ),
-                                SizedBox(width: MediaQuery.of(context).size.height * 0.020),
-                                DropdownButton(
-                                  dropdownColor: Colors.white,
-                                  style: GoogleFonts.roboto(
-                                    textStyle: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.022, fontWeight: FontWeight.w600, color: const Color(0xff2200FF)),
-                                  ),
-                                  value: dropdownvalue[index],
-                                  icon: Icon(Icons.translate, size: MediaQuery.of(context).size.height * 0.030, color: const Color(0xff2200FF)),
-                                  items: languageList.map((String items) {
-                                    return DropdownMenuItem(value: items, child: Text(items));
-                                  }).toList(),
-                                  // After selecting the desired option,it will
-                                  // change button value to selected value
-                                  onChanged: (String? newValue) async {
-                                    setState(() {
-                                      isLoading = true;
-                                    });
-                                    String lang = newValue == 'English'
-                                        ? 'en'
-                                        : newValue == 'Hindi'
-                                            ? 'hi'
-                                            : newValue == 'Marathi'
-                                                ? 'mr'
-                                                : newValue == 'Odisha'
-                                                    ? 'or'
-                                                    : newValue == 'Bengali'
-                                                        ? 'bn'
-                                                        : '';
-                                    final messageConverted = await convertMessage(index, messageArray.value[index]['message'], tempLang[index], lang);
-                                    messageArray.value.removeAt(index);
-                                    messageArray.value.insert(index, {'chatbot': true, 'message': messageConverted});
-
-                                    setState(() {
-                                      dropdownvalue[index] = newValue ?? "";
-                                      tempLang[index] = lang;
-                                      isLoading = false;
-                                    });
-                                  },
-                                )
-                              ],
+        return Align(
+          alignment: messageArray.value[index]['chatbot'] == true ? Alignment.centerLeft : Alignment.centerRight,
+          child: Column(
+            crossAxisAlignment: messageArray.value[index]['chatbot'] == true ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(color: messageArray.value[index]['chatbot'] == true ? Colors.white : const Color(0xff2200FF), borderRadius: BorderRadius.circular(8)),
+                child: Text(messageArray.value[index]['message'],
+                    style: GoogleFonts.poppins(
+                      textStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: messageArray.value[index]['chatbot'] == true ? Colors.black : Colors.white),
+                    )),
+              ),
+              messageArray.value[index]['chatbot'] == true
+                  ? Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () async {
+                              flutterTts.setSpeechRate(0.795);
+                              await flutterTts.getVoices.then((value) => print("Voices:" + value.toString()));
+                              flutterTts.setVoice({'name': 'Google हिन्दी', 'locale': 'en-US'});
+                              setState(() {});
+                              if (isTTSEnable[index]) {
+                                await flutterTts.stop();
+                                isTTSEnable[index] = false;
+                              } else {
+                                if (tempLang[index] == 'en') {
+                                  await flutterTts.speak(messageArray.value[index]['message']);
+                                } else {
+                                  // String valueText = await convertMessage(index, messageItem[index]['message'], tempLang[index], 'hi', isVoiceActive: true);
+                                  await flutterTts.speak(messageArray.value[index]['message']);
+                                }
+                                await flutterTts.setVolume(100);
+                                isTTSEnable[index] = true;
+                              }
+                              setState(() {});
+                              flutterTts.setCompletionHandler(() async {
+                                await flutterTts.stop();
+                                setState(() {
+                                  isTTSEnable[index] = false;
+                                });
+                              });
+                            },
+                            child: Icon(
+                              isTTSEnable[index] ? Icons.stop : Icons.headset_mic_sharp,
+                              size: 20,
+                              color: const Color(0xff2200FF),
                             ),
+                          ),
+                          SizedBox(width: MediaQuery.of(context).size.height * 0.020),
+                          DropdownButton(
+                            dropdownColor: Colors.white,
+                            style: GoogleFonts.poppins(
+                              textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Color(0xff2200FF)),
+                            ),
+                            value: dropdownvalue[index],
+                            icon: const Icon(Icons.translate, size: 20, color: Color(0xff2200FF)),
+                            items: languageList.map((String items) {
+                              return DropdownMenuItem(value: items, child: Text(items));
+                            }).toList(),
+                            // After selecting the desired option,it will
+                            // change button value to selected value
+                            onChanged: (String? newValue) async {
+                              // setState(() {
+                              isLoading.value = true;
+                              // });
+                              String lang = newValue == 'English'
+                                  ? 'en'
+                                  : newValue == 'Hindi'
+                                      ? 'hi'
+                                      : newValue == 'Marathi'
+                                          ? 'mr'
+                                          : newValue == 'Odisha'
+                                              ? 'or'
+                                              : newValue == 'Bengali'
+                                                  ? 'bn'
+                                                  : '';
+                              final messageConverted = await convertMessage(index, messageArray.value[index]['message'], tempLang[index], lang);
+                              messageArray.value.removeAt(index);
+                              messageArray.value.insert(index, {'chatbot': true, 'message': messageConverted});
+
+                              setState(() {
+                                dropdownvalue[index] = newValue ?? "";
+                                tempLang[index] = lang;
+                                isLoading.value = false;
+                              });
+                            },
                           )
-                        : Container()
-                  ],
-                ),
-              );
+                        ],
+                      ),
+                    )
+                  : Container()
+            ],
+          ),
+        );
       },
     );
+  }
+
+  Future saveMessageDetails(String messageText, String userMessage) async {
+    CollectionReference users = fireStore.collection('chatbot_response');
+    await users.add({'chatbot': true, "message": messageText, 'user_message': userMessage}).catchError((error) {
+      print("Failed to add user: $error");
+    });
   }
 
   Future convertMessage(int index, String textMessage, String selectedLang, String targetLang, {bool? isVoiceActive = false}) async {
@@ -693,4 +874,46 @@ class MyCustomScrollBehavior extends MaterialScrollBehavior {
         PointerDeviceKind.touch,
         PointerDeviceKind.mouse,
       };
+}
+
+class ProgressIndicatorDemo extends StatefulWidget {
+  const ProgressIndicatorDemo({super.key});
+
+  @override
+  _ProgressIndicatorDemoState createState() => new _ProgressIndicatorDemoState();
+}
+
+class _ProgressIndicatorDemoState extends State<ProgressIndicatorDemo> with SingleTickerProviderStateMixin {
+  late AnimationController controller;
+  late Animation<double> animation;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = AnimationController(duration: const Duration(milliseconds: 2000), vsync: this);
+    animation = Tween(begin: 0.0, end: 1.0).animate(controller)
+      ..addListener(() {
+        setState(() {
+          // the state that has changed here is the animation object’s value
+        });
+      });
+    controller.repeat();
+  }
+
+  @override
+  void dispose() {
+    controller.stop();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+        child: Container(
+      child: LinearProgressIndicator(
+        value: animation.value,
+        color: const Color(0xff2200FF),
+      ),
+    ));
+  }
 }

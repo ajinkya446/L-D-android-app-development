@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Security-Policy" content="microphone 'self'">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <title>Example Iframe</title> -->
+
+    <script type="application/javascript">
+        async function myJavaScriptFunction(message) {
+            // This function is invoked from Flutter
+            console.log('JavaScript function invoked with message:', message);
+            // Call the callback function defined in Flutter
+           
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            console.log('Flutter callback stream with message:', stream.addEventListener);
+            myFlutterCallback(stream);
+        }
+
+        async function myFlutterCallback(message) {
+            console.log('Flutter callback invoked with message:', message);
+        }
+    </script>
+</head>
+
+<body>
+    <!-- <button id="enable-microphone">Enable Microphone</button> -->
+    <style>
+        .my-chat {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            padding-bottom: 2%;
+        }
+    </style>
+    <!-- <h1>Example Iframe</h1>
+    <p>Below is an iframe:</p> -->
+    <script src="main.dart.js" type="application/javascript"></script>
+    <iframe class="my-chat" src="http://115.124.98.61/quizweb/" width="30%" height="500" frameborder="0" allow="microphone"></iframe>
+
+</body>
+
+</html>
