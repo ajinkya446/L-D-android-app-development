@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:chatbot/chatbot_screen/progress_indicator_chat.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -27,6 +29,8 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   ValueNotifier<bool> isLoading = ValueNotifier(false);
   List<String> dropdownvalue = ['English'], tempLang = ['en'];
   List<bool> isTTSEnable = [false];
+  bool isDataFound = false;
+  FirebaseFirestore fireStore = FirebaseFirestore.instance;
 
   FlutterTts flutterTts = FlutterTts();
   var languageList = [
@@ -168,6 +172,23 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     });
   }
 
+  Future getFirebaseDetails() async {
+    final response = await FirebaseFirestore.instance.collection('chatbot_response').get();
+    for (int i = 0; i < response.docs.length; i++) {
+      if (!isDataFound) {
+        final details = response.docs[i].data();
+        if (chatController.text.toString().toLowerCase() == details['user_message'].toString().toLowerCase()) {
+          dropdownvalue.add("English");
+          tempLang.add("en");
+          isTTSEnable.add(false);
+          isDataFound = true;
+          messageArray.value.add({'chatbot': true, 'message': details['message'] ?? ''});
+          break;
+        }
+      }
+    }
+  }
+
   Future checkChatResponse() async {
     if (chatController.text.isNotEmpty) {
       if (chatResponseList != null) {
@@ -178,11 +199,15 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       dropdownvalue.add("English");
       isTTSEnable.add(false);
       tempLang.add("en");
+      await getFirebaseDetails();
       setState(() {});
-      await collectChatResponse(chatController.text);
+      if (!isDataFound) {
+        await collectChatResponse(chatController.text);
+      }
       chatController.clear();
       chatController.text = "";
       isLoading.value = false;
+      isDataFound = false;
       if (isScroll) {
         SchedulerBinding.instance.addPostFrameCallback((_) {
           scrollController.animateTo(scrollController.position.maxScrollExtent, duration: const Duration(milliseconds: 1), curve: Curves.fastOutSlowIn);
@@ -203,6 +228,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         dropdownvalue.add("English");
         tempLang.add("en");
         isTTSEnable.add(false);
+        await saveMessageDetails(chatResponseList?.answer ?? '', question);
         messageArray.value.add({'chatbot': true, 'message': chatResponseList?.answer ?? ''});
         setState(() {});
       }
@@ -364,4 +390,15 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     }
     return message;
   }
+
+  Future saveMessageDetails(String messageText, String userMessage) async {
+    CollectionReference users = fireStore.collection('chatbot_response');
+    await users.add({'chatbot': true, "message": messageText, 'user_message': userMessage}).catchError((error) {
+      print("Failed to add user: $error");
+    });
+  }
+}
+
+getFirebaseInitialisation() async {
+  await Firebase.initializeApp();
 }
