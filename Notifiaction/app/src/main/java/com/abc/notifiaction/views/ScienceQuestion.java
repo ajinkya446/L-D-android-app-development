@@ -16,19 +16,19 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.abc.notifiaction.R;
 import com.abc.notifiaction.adapter.MCQAdapter;
-import com.abc.notifiaction.databinding.ActivityQuestionScreenBinding;
+import com.abc.notifiaction.databinding.ActivityScienceQuestionBinding;
 import com.abc.notifiaction.interfaces.RecyclerViewInterface;
 import com.abc.notifiaction.model.Category;
 
 import java.util.ArrayList;
 
-public class QuestionScreen extends AppCompatActivity implements RecyclerViewInterface {
-    private ActivityQuestionScreenBinding activityQuestionScreenBinding;
+public class ScienceQuestion extends AppCompatActivity implements RecyclerViewInterface {
+    private ActivityScienceQuestionBinding activityMathQuestionBinding;
 
     ArrayList<String> questionList = new ArrayList<>();
-    String[] finalAnswer = {"Chambal", "Karnataka", "November 12", "25 years", "2019",
-            "The ratio of the length to the height of the flag is 3:2", "Option 1 and 2", "Punjab",
-            "5+3+3+4", "Chlorine"};
+    String[] finalAnswer = {"7", "Hydrogen", "Alcohol", "Hertz", "Red",
+            "Trypsin", "Salivary", "Adrenal",
+            "Neuron", "Nephron"};
     ArrayList<ArrayList<String>> answersList = new ArrayList<>();
     public ArrayList<Boolean> answersMap = new ArrayList<>();
     int pageIndex = 0;
@@ -37,88 +37,88 @@ public class QuestionScreen extends AppCompatActivity implements RecyclerViewInt
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activityQuestionScreenBinding = DataBindingUtil.setContentView(this, R.layout.activity_question_screen);
+        activityMathQuestionBinding = DataBindingUtil.setContentView(this, R.layout.activity_science_question);
 
         /// MCQ For Question 1
         ArrayList<String> answer1 = new ArrayList<>();
-        answer1.add("Indus");
-        answer1.add("Brahmaputra");
-        answer1.add("Chambal");
-        answer1.add("Kosi");
+        answer1.add("6");
+        answer1.add("7");
+        answer1.add("8");
+        answer1.add("9");
 
         /// MCQ For question 2
         ArrayList<String> answer2 = new ArrayList<>();
-        answer2.add("Andhra Pradesh");
-        answer2.add("Telangana");
-        answer2.add("Tamil Nadu");
-        answer2.add("Karnataka");
+        answer2.add("Oxygen");
+        answer2.add("Helium");
+        answer2.add("Carbon");
+        answer2.add("Hydrogen");
 
         /// MCQ For question 3
         ArrayList<String> answer3 = new ArrayList<>();
-        answer3.add("December 21");
-        answer3.add("March 7");
-        answer3.add("September 3");
-        answer3.add("November 12");
+        answer3.add("Aldehyde");
+        answer3.add("Acetic acid");
+        answer3.add("Alcohol");
+        answer3.add("Ketone");
 
         /// MCQ For question 4
         ArrayList<String> answer4 = new ArrayList<>();
-        answer4.add("30 years");
-        answer4.add("18 years");
-        answer4.add("25 years");
-        answer4.add("21 years");
+        answer4.add("Diopter");
+        answer4.add("Second");
+        answer4.add("Hertz");
+        answer4.add("Meter");
 
         /// MCQ For question 5
         ArrayList<String> answer5 = new ArrayList<>();
-        answer5.add("2018");
-        answer5.add("2019");
-        answer5.add("2014");
-        answer5.add("2016");
+        answer5.add("Black");
+        answer5.add("Blue");
+        answer5.add("Red");
+        answer5.add("Orange");
 
         /// MCQ For question 6
         ArrayList<String> answer6 = new ArrayList<>();
-        answer6.add("The ratio of the length to the height of the flag is 3:2");
-        answer6.add("The ratio of the length to the height of the flag is 2:3");
-        answer6.add("The ratio of the length to the height of the flag is 3:3");
-        answer6.add("None of the above");
+        answer6.add("Pepsin");
+        answer6.add("Hydrochloric acid");
+        answer6.add("Mucus");
+        answer6.add("Trypsin");
 
         /// MCQ For question 7
         ArrayList<String> answer7 = new ArrayList<>();
-        answer7.add("Africa South of Sahara");
-        answer7.add("South Asia");
-        answer7.add("Option 1 and 2");
-        answer7.add("Europe");
+        answer7.add("Adrenal");
+        answer7.add("Pituitary");
+        answer7.add("Gonads");
+        answer7.add("Salivary");
 
         /// MCQ For question 8
         ArrayList<String> answer8 = new ArrayList<>();
         answer8.add("Haryana");
-        answer8.add("Punjab");
-        answer8.add("Maharashtra");
-        answer8.add("Gujarat");
+        answer8.add("Pituitary");
+        answer8.add("Gonads");
+        answer8.add("Adrenal");
 
         /// MCQ For question 9
         ArrayList<String> answer9 = new ArrayList<>();
-        answer9.add("3+4+5+3");
-        answer9.add("3+5+3+4");
-        answer9.add("5+3+3+4");
-        answer9.add("4+3+5+3");
+        answer9.add("Neutron");
+        answer9.add("Neuron");
+        answer9.add("Nephron");
+        answer9.add("Nucleon");
 
         /// MCQ For question 10
         ArrayList<String> answer10 = new ArrayList<>();
-        answer10.add("Calcium");
-        answer10.add("Chlorine");
-        answer10.add("Phosphorus");
-        answer10.add("Bromine");
+        answer10.add("Neutron");
+        answer10.add("Neuron");
+        answer10.add("Nephron");
+        answer10.add("Nucleon");
 
-        questionList.add("Which river among the following starts its Journey and ends its journey in India itself?");
-        questionList.add("The dam Krishna Raja Sagara is located in which state?");
-        questionList.add("Which day is known as World Pneumonia Day?");
-        questionList.add("What is the minimum age to be a Chief Minister of any state in India?");
-        questionList.add("In which year was the late Shri. Pranab Mukherjee awarded the Bharat Ratna?");
-        questionList.add("Which statement is true among the following?");
-        questionList.add("According to the Global Hunger Index, which among the following regions has the highest hunger and undernutrition levels in the world?");
-        questionList.add("Which state of India is called the Land of Five Rivers?");
-        questionList.add("With changes in the education policy, the 10+2 system was abolished and replaced by which system by the NEP 2020?");
-        questionList.add("Which ion is the most dissolved in ocean water?");
+        questionList.add("What is the PH of H2O?");
+        questionList.add("Which of the following gas is reduced in the reduction process?");
+        questionList.add("Which of the following compound is mainly used in hand sanitizer?");
+        questionList.add("What is the S.I unit of frequency?");
+        questionList.add("Acid turns blue litmus paper into which color?");
+        questionList.add("Which of the following enzymes is not present in the human stomach?");
+        questionList.add("Which of the following gland is present in the human mouth?");
+        questionList.add("Name the gland which is present above our kidneys?");
+        questionList.add("What is the basic unit of our neural system?");
+        questionList.add("What is the basic unit of our excretory system?");
 
 
         answersList.add(answer1);
@@ -132,34 +132,36 @@ public class QuestionScreen extends AppCompatActivity implements RecyclerViewInt
         answersList.add(answer9);
         answersList.add(answer10);
         MCQAdapter mcqAdapter = new MCQAdapter(answersList.get(pageIndex), this, finalAnswer[pageIndex], this);
-        activityQuestionScreenBinding.answerRecyclerview.setAdapter(mcqAdapter);
-        activityQuestionScreenBinding.answerRecyclerview.setLayoutManager(new LinearLayoutManager(this));
+        activityMathQuestionBinding.answerRecyclerviewMath.setAdapter(mcqAdapter);
+        activityMathQuestionBinding.answerRecyclerviewMath.setLayoutManager(new LinearLayoutManager(this));
 
-        activityQuestionScreenBinding.questionLabel.setText("Question " + (pageIndex + 1) + " of 10");
-        activityQuestionScreenBinding.question.setText(questionList.get(pageIndex));
+        activityMathQuestionBinding.questionLabelMath.setText("Question " + (pageIndex + 1) + " of 10");
+        activityMathQuestionBinding.questionMath.setText(questionList.get(pageIndex));
         Intent intent = getIntent();
-        Category categoryModel = (Category) intent.getSerializableExtra("title");
 
+        Category categoryModel = (Category) intent.getSerializableExtra("title");
+//        Integer background = intent.getIntExtra("background", 0);
         int startColor = Color.parseColor(categoryModel.getColorMap().get("start_color"));
         int centerColor = Color.parseColor(categoryModel.getColorMap().get("center_color"));
         int endColor = Color.parseColor(categoryModel.getColorMap().get("end_color"));
         GradientDrawable gradientDrawable = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, new int[]{startColor, centerColor, endColor});
-        activityQuestionScreenBinding.layoutButton2.setBackground(gradientDrawable);
-        activityQuestionScreenBinding.layoutButton2.setOnClickListener(v -> {
+
+        activityMathQuestionBinding.layoutButton2Math.setBackground(gradientDrawable);
+        activityMathQuestionBinding.layoutButton2Math.setOnClickListener(v -> {
             try {
                 if (!answersMap.isEmpty()) {
                     if (pageIndex < 9 && answersMap.size() > pageIndex) {
                         if (answersMap.get(pageIndex) != null) {
                             pageIndex = pageIndex + 1;
                             if (pageIndex == 9) {
-                                activityQuestionScreenBinding.btnNext.setText("Submit");
+                                activityMathQuestionBinding.btnNext.setText("Submit");
                             }
 
-                            activityQuestionScreenBinding.questionLabel.setText("Question " + (pageIndex + 1) + " of 10");
-                            activityQuestionScreenBinding.question.setText(questionList.get(pageIndex));
+                            activityMathQuestionBinding.questionLabelMath.setText("Question " + (pageIndex + 1) + " of 10");
+                            activityMathQuestionBinding.questionMath.setText(questionList.get(pageIndex));
                             MCQAdapter adapter = new MCQAdapter(answersList.get(pageIndex), this, finalAnswer[pageIndex], this);
-                            activityQuestionScreenBinding.answerRecyclerview.setAdapter(adapter);
-                            activityQuestionScreenBinding.answerRecyclerview.setLayoutManager(new LinearLayoutManager(this));
+                            activityMathQuestionBinding.answerRecyclerviewMath.setAdapter(adapter);
+                            activityMathQuestionBinding.answerRecyclerviewMath.setLayoutManager(new LinearLayoutManager(this));
                         }
                     } else {
                         if (pageIndex <= answersMap.size()) {

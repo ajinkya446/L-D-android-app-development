@@ -1,10 +1,14 @@
 package com.abc.notifiaction.views;
 
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -19,19 +23,24 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.abc.notifiaction.R;
 import com.abc.notifiaction.adapter.GridViewAdapter;
 import com.abc.notifiaction.databinding.ActivityDashboardScreenBinding;
+import com.abc.notifiaction.model.Category;
 import com.abc.notifiaction.model.CategoryModel;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class DashboardScreen extends AppCompatActivity {
 
     private ActivityDashboardScreenBinding activityDashboardScreenBinding;
-
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
     @SuppressLint({"MissingInflatedId", "SetTextI18n"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,24 +104,61 @@ public class DashboardScreen extends AppCompatActivity {
             }
 
         });
+        ArrayList<CategoryModel> categoryArrayList = new ArrayList<>();
+        ArrayList<Category> mapCategories = new ArrayList<>();
 
 
-        ArrayList<CategoryModel> courseModelArrayList = new ArrayList<>();
+        /// Getting Detailed collection table data from FIREBASE Firestore.
+        db.collection("quiz_category").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
 
-        courseModelArrayList.add(new CategoryModel(R.drawable.gk, "General Knowledge", R.drawable.bg2));
-        courseModelArrayList.add(new CategoryModel(R.drawable.science, "Science", R.drawable.bg1));
-        courseModelArrayList.add(new CategoryModel(R.drawable.maths, "Maths", R.drawable.bg2));
-        courseModelArrayList.add(new CategoryModel(R.drawable.entertainment, "Entertainment", R.drawable.bg3));
-        courseModelArrayList.add(new CategoryModel(R.drawable.sports, "Sport", R.drawable.bg4));
-        courseModelArrayList.add(new CategoryModel(R.drawable.tech, "Technology", R.drawable.bg1));
-
-        GridViewAdapter gridViewAdapter = new GridViewAdapter(this, courseModelArrayList);
-        activityDashboardScreenBinding.gridview.setAdapter(gridViewAdapter);
-        activityDashboardScreenBinding.gridview.setOnItemClickListener((parent, view, position, id) -> {
-            Intent intent = new Intent(this, QuizList.class);
-            intent.putExtra("title", courseModelArrayList.get(position).titleName); // put image data in Intent
-            intent.putExtra("background", courseModelArrayList.get(position).drawable); // put image data in Intent
-            startActivity(intent);
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    Map<String, Object> details = document.getData();
+                    int startColor = 0;
+                    int centerColor = 0;
+                    int endColor = 0;
+                    Category category = null;
+                    Map<String, String> colorMap = new HashMap<>();
+                    String imageUrl = "";
+                    GradientDrawable gradientDrawable = null;
+                    if (details.containsKey("image_url")) {
+                        imageUrl = details.get("image_url").toString();
+                    }
+                    if (details.containsKey("gradient_color")) {
+                        Map<String, String> colors = (Map<String, String>) details.get("gradient_color");
+                        if (colors.containsKey("center_color")) {
+                            colorMap.put("center_color", colors.get("center_color").toString());
+                            int colorInner = Color.parseColor(colors.get("center_color").toString());
+                            centerColor = colorInner;
+                        }
+                        if (colors.containsKey("start_color")) {
+                            colorMap.put("start_color", colors.get("start_color").toString());
+                            int colorInner = Color.parseColor(colors.get("start_color").toString());
+                            startColor = colorInner;
+                        }
+                        if (colors.containsKey("end_color")) {
+                            colorMap.put("end_color", colors.get("center_color").toString());
+                            int colorInner = Color.parseColor(colors.get("end_color").toString());
+                            endColor = colorInner;
+                        }
+                        gradientDrawable = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, new int[]{startColor, centerColor, endColor});
+                    }
+                    category = new Category(imageUrl, details.get("cat_name").toString(), colorMap);
+                    CategoryModel categoryModel = new CategoryModel(imageUrl, details.get("cat_name").toString(), gradientDrawable);
+                    Log.d(TAG, document.getId() + " => " + document.getData());
+                    categoryArrayList.add(categoryModel);
+                    mapCategories.add(category);
+                }
+                GridViewAdapter gridViewAdapter = new GridViewAdapter(this, categoryArrayList);
+                activityDashboardScreenBinding.gridview.setAdapter(gridViewAdapter);
+                activityDashboardScreenBinding.gridview.setOnItemClickListener((parent, view, position, id) -> {
+                    Intent intent = new Intent(this, QuizList.class);
+                    intent.putExtra("title", mapCategories.get(position)); // put image data in Intent
+                    startActivity(intent);
+                });
+            } else {
+                Log.d(TAG, "Error getting documents: ", task.getException());
+            }
         });
     }
 }

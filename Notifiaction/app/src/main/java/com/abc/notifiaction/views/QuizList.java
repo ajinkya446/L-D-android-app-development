@@ -1,14 +1,17 @@
 package com.abc.notifiaction.views;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.abc.notifiaction.R;
+import com.abc.notifiaction.model.Category;
 import com.google.android.material.appbar.MaterialToolbar;
 
 public class QuizList extends AppCompatActivity {
@@ -30,18 +33,29 @@ public class QuizList extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Intent intent = getIntent();
 
-        String title = intent.getStringExtra("title");
-        Integer background = intent.getIntExtra("background", 0);
+        Category categoryModel = (Category) intent.getSerializableExtra("title");
+//        Integer background = intent.getIntExtra("background", 0);
+        int startColor = Color.parseColor(categoryModel.getColorMap().get("start_color"));
+        int centerColor = Color.parseColor(categoryModel.getColorMap().get("center_color"));
+        int endColor = Color.parseColor(categoryModel.getColorMap().get("end_color"));
+        GradientDrawable gradientDrawable = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, new int[]{startColor, centerColor, endColor});
 
-        materialToolbar.setTitle(title);
-        materialToolbar.setBackgroundResource(background);
-        linearLayout.setBackgroundResource(background);
+        materialToolbar.setTitle(categoryModel.getTitleName());
+        materialToolbar.setBackground(gradientDrawable);
+        linearLayout.setBackground(gradientDrawable);
 
         linearLayout.setOnClickListener(v -> {
-            Intent quizIntent = new Intent(this, QuestionScreen.class);
+            Intent quizIntent = null;
+            if (categoryModel.getTitleName().equals("General Knowledge")) {
+                quizIntent = new Intent(this, QuestionScreen.class);
+            } else if (categoryModel.getTitleName().equals("Science")) {
+                quizIntent = new Intent(this, ScienceQuestion.class);
+            }
+//
 //            Toast.makeText(this, "Quiz will start in 3 seconds", Toast.LENGTH_SHORT).show();
-            quizIntent.putExtra("title", title); // put image data in Intent
-            quizIntent.putExtra("background", background); // put image data in Intent
+            quizIntent.putExtra("title", categoryModel); // put image data in Intent
+            // put image data in Intent
+//            quizIntent.putExtra("background", background); // put image data in Intent
             startActivity(quizIntent);
         });
         materialToolbar.setNavigationOnClickListener(v -> {
