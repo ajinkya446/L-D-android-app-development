@@ -7,6 +7,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -48,20 +49,25 @@ public class QuizList extends AppCompatActivity {
             Intent quizIntent = null;
             if (categoryModel.getTitleName().equals("General Knowledge")) {
                 quizIntent = new Intent(this, QuestionScreen.class);
+                openExamPage(quizIntent, categoryModel);
             } else if (categoryModel.getTitleName().equals("Science")) {
                 quizIntent = new Intent(this, ScienceQuestion.class);
+                openExamPage(quizIntent, categoryModel);
+            } else {
+                Toast.makeText(this, "This Test not been setup", Toast.LENGTH_SHORT).show();
             }
-//
-//            Toast.makeText(this, "Quiz will start in 3 seconds", Toast.LENGTH_SHORT).show();
-            quizIntent.putExtra("title", categoryModel); // put image data in Intent
-            // put image data in Intent
-//            quizIntent.putExtra("background", background); // put image data in Intent
-            startActivity(quizIntent);
+           /* quizIntent.putExtra("title", categoryModel);
+            startActivity(quizIntent);*/
         });
         materialToolbar.setNavigationOnClickListener(v -> {
             startActivity(new Intent(getApplicationContext(), DashboardScreen.class));
             finish();
         });
+    }
+
+    void openExamPage(Intent quizIntent, Category categoryModel) {
+        quizIntent.putExtra("title", categoryModel);
+        startActivity(quizIntent);
     }
 
 }

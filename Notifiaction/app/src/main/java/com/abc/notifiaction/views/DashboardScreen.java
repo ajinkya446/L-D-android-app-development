@@ -152,13 +152,25 @@ public class DashboardScreen extends AppCompatActivity {
                 GridViewAdapter gridViewAdapter = new GridViewAdapter(this, categoryArrayList);
                 activityDashboardScreenBinding.gridview.setAdapter(gridViewAdapter);
                 activityDashboardScreenBinding.gridview.setOnItemClickListener((parent, view, position, id) -> {
-                    Intent intent = new Intent(this, QuizList.class);
-                    intent.putExtra("title", mapCategories.get(position)); // put image data in Intent
-                    startActivity(intent);
+
+                    if (mapCategories.get(position).getTitleName().equals("General Knowledge")) {
+                        openExamPage(mapCategories.get(position));
+                    } else if (mapCategories.get(position).getTitleName().equals("Science")) {
+                        openExamPage(mapCategories.get(position));
+                    } else {
+                        Toast.makeText(this, "This Test not been setup", Toast.LENGTH_SHORT).show();
+                    }
+
                 });
             } else {
                 Log.d(TAG, "Error getting documents: ", task.getException());
             }
         });
+    }
+
+    void openExamPage(Category categoryModel) {
+        Intent intent = new Intent(this, QuizList.class);
+        intent.putExtra("title", categoryModel); // put image data in Intent
+        startActivity(intent);
     }
 }
