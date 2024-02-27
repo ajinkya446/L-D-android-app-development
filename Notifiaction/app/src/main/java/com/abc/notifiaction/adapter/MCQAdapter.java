@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.abc.notifiaction.R;
 import com.abc.notifiaction.interfaces.RecyclerViewInterface;
+import com.abc.notifiaction.model.SingletonExample;
 
 import java.util.ArrayList;
 
@@ -42,7 +43,7 @@ public class MCQAdapter extends RecyclerView.Adapter<MCQAdapter.MCQViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull MCQViewHolder holder, @SuppressLint("RecyclerView") int position) {
         holder.radioButton.setText(answersList.get(position));
-
+        SingletonExample singletonExample=new SingletonExample();
         holder.radioButton.setOnClickListener(v -> {
             if (selectedPage == -1) {
                 selectedPage = position;

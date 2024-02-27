@@ -19,8 +19,11 @@ import com.abc.notifiaction.adapter.MCQAdapter;
 import com.abc.notifiaction.databinding.ActivityScienceQuestionBinding;
 import com.abc.notifiaction.interfaces.RecyclerViewInterface;
 import com.abc.notifiaction.model.Category;
+import com.abc.notifiaction.model.SingletonExample;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 public class ScienceQuestion extends AppCompatActivity implements RecyclerViewInterface {
     private ActivityScienceQuestionBinding activityMathQuestionBinding;
@@ -30,7 +33,8 @@ public class ScienceQuestion extends AppCompatActivity implements RecyclerViewIn
             "Trypsin", "Salivary", "Adrenal",
             "Neuron", "Nephron"};
     ArrayList<ArrayList<String>> answersList = new ArrayList<>();
-    public ArrayList<Boolean> answersMap = new ArrayList<>();
+    //    public ArrayList<Boolean> answersMap = new ArrayList<>();
+    SingletonExample singletonExample = new SingletonExample();
     int pageIndex = 0;
 
     @SuppressLint({"SetTextI18n", "MissingInflatedId"})
@@ -149,12 +153,12 @@ public class ScienceQuestion extends AppCompatActivity implements RecyclerViewIn
         activityMathQuestionBinding.layoutButton2Math.setBackground(gradientDrawable);
         activityMathQuestionBinding.layoutButton2Math.setOnClickListener(v -> {
             try {
-                if (!answersMap.isEmpty()) {
-                    if (pageIndex < 9 && answersMap.size() > pageIndex) {
-                        if (answersMap.get(pageIndex) != null) {
+                if (!singletonExample.answersMap.isEmpty()) {
+                    if (pageIndex < 9 && singletonExample.answersMap.size() > pageIndex) {
+                        if (singletonExample.answersMap.get(pageIndex) != null) {
                             pageIndex = pageIndex + 1;
                             if (pageIndex == 9) {
-                                activityMathQuestionBinding.btnNext.setText("Submit");
+                                activityMathQuestionBinding.btnNextMath.setText("Submit");
                             }
 
                             activityMathQuestionBinding.questionLabelMath.setText("Question " + (pageIndex + 1) + " of 10");
@@ -164,12 +168,19 @@ public class ScienceQuestion extends AppCompatActivity implements RecyclerViewIn
                             activityMathQuestionBinding.answerRecyclerviewMath.setLayoutManager(new LinearLayoutManager(this));
                         }
                     } else {
-                        if (pageIndex <= answersMap.size()) {
-                            Toast.makeText(this, "Please select answer first", Toast.LENGTH_SHORT).show();
-                        } else {
-                            if (pageIndex == 9) {
-                                startActivity(new Intent(getApplicationContext(), RewardScreen.class));
-                                finish();
+                        if (!singletonExample.answersMap.isEmpty()) {
+                            if (pageIndex < singletonExample.answersMap.size() && singletonExample.answersMap.size() != 10) {
+                                Toast.makeText(this, "Please select answer first", Toast.LENGTH_SHORT).show();
+                            } else {
+                                if (pageIndex >= 9) {
+                                    int occurrences = Collections.frequency(Arrays.asList(singletonExample.answersMap.toArray()), true);
+                                    Intent rewardIntent = new Intent(getApplicationContext(), RewardScreen.class);
+                                    rewardIntent.putExtra("score", String.valueOf(occurrences));
+                                    startActivity(rewardIntent);
+                                    finish();
+                                } else {
+                                    Toast.makeText(this, "Please select answer first", Toast.LENGTH_SHORT).show();
+                                }
                             }
                         }
                     }
@@ -185,8 +196,12 @@ public class ScienceQuestion extends AppCompatActivity implements RecyclerViewIn
 
     @Override
     public void recyclerViewListClicked(View v, int position) {
-        if (pageIndex >= answersMap.size() || pageIndex < 0) {
-            answersMap.add(pageIndex, true);
+        if (pageIndex >= singletonExample.answersMap.size() || pageIndex < 0) {
+            if (answersList.get(pageIndex).get(position).equals(finalAnswer[pageIndex])) {
+                singletonExample.answersMap.add(pageIndex, true);
+            } else {
+                singletonExample.answersMap.add(pageIndex, false);
+            }
         }
     }
 
