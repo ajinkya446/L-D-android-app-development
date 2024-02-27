@@ -56,12 +56,10 @@
             android:layout_marginBottom="30dp"
             android:fontFamily="@font/robotoslabregular"
             android:text="10/10"
-            android:textColor="@color/material_dynamic_tertiary10"
             android:textSize="26sp"
             app:layout_constraintBottom_toTopOf="@+id/layout_buttonReward"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:ignore="MissingConstraints" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <LinearLayout
             android:id="@+id/layout_buttonReward"
