@@ -4,17 +4,20 @@ import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.databinding.DataBindingUtil;
@@ -25,6 +28,7 @@ import com.abc.notifiaction.adapter.GridViewAdapter;
 import com.abc.notifiaction.databinding.ActivityDashboardScreenBinding;
 import com.abc.notifiaction.model.Category;
 import com.abc.notifiaction.model.CategoryModel;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -53,39 +57,46 @@ public class DashboardScreen extends AppCompatActivity {
         activityDashboardScreenBinding.topAppBar.setTitle(firebaseUser.getDisplayName());
         Toolbar toolbar = (Toolbar) findViewById(R.id.topAppBar);
         DrawerLayout drawer = findViewById(R.id.my_drawer_layout);
+        CircularProgressIndicator progressIndicator = findViewById(R.id.progress_circular);
+        GridView gridView = findViewById(R.id.gridview);
+
         View headerLayout =
                 activityDashboardScreenBinding.navView.inflateHeaderView(R.layout.drawer_layout);
         ImageView imageViewUser = headerLayout.findViewById(R.id.userImage);
         TextView userName = headerLayout.findViewById(R.id.userName);
         TextView userEmail = headerLayout.findViewById(R.id.email);
-        LinearLayout linearLayoutProfile = headerLayout.findViewById(R.id.profile_menu);
-        LinearLayout linearLayoutSetting = headerLayout.findViewById(R.id.layoutSetting);
+//        LinearLayout linearLayoutProfile = headerLayout.findViewById(R.id.profile_menu);
+//        LinearLayout linearLayoutSetting = headerLayout.findViewById(R.id.layoutSetting);
         LinearLayout linearLayoutExit = headerLayout.findViewById(R.id.exitMenu);
         SwitchMaterial switchMaterial = headerLayout.findViewById(R.id.theme);
         switchMaterial.setText("Light Theme");
         switchMaterial.setChecked(false);
+
         switchMaterial.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (buttonView.isChecked()) {
                 buttonView.setText("Dark Theme");
                 switchMaterial.setChecked(isChecked);
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
             } else {
                 buttonView.setText("Light Theme");
                 switchMaterial.setChecked(isChecked);
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
             }
         });
 
-
+        gridView.setVisibility(View.INVISIBLE);
+        progressIndicator.setVisibility(View.VISIBLE);
         Picasso.get().load(Objects.requireNonNull(firebaseUser.getPhotoUrl()).toString()).into(imageViewUser);
         userName.setText(firebaseUser.getDisplayName());
         userEmail.setText(firebaseUser.getEmail());
 
-        linearLayoutProfile.setOnClickListener(v -> {
-            Toast.makeText(this, "Still Under Development", Toast.LENGTH_SHORT).show();
-        });
-
-        linearLayoutSetting.setOnClickListener(v -> {
-            Toast.makeText(this, "Still Under Development", Toast.LENGTH_SHORT).show();
-        });
+//        linearLayoutProfile.setOnClickListener(v -> {
+//            Toast.makeText(this, "Still Under Development", Toast.LENGTH_SHORT).show();
+//        });
+//
+//        linearLayoutSetting.setOnClickListener(v -> {
+//            Toast.makeText(this, "Still Under Development", Toast.LENGTH_SHORT).show();
+//        });
 
         linearLayoutExit.setOnClickListener(v -> {
             FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -157,11 +168,17 @@ public class DashboardScreen extends AppCompatActivity {
                         openExamPage(mapCategories.get(position));
                     } else if (mapCategories.get(position).getTitleName().equals("Science")) {
                         openExamPage(mapCategories.get(position));
+                    } else if (mapCategories.get(position).getTitleName().equals("Entertainment")) {
+                        openExamPage(mapCategories.get(position));
+                    } else if (mapCategories.get(position).getTitleName().equals("Sports")) {
+                        openExamPage(mapCategories.get(position));
                     } else {
                         Toast.makeText(this, "This Test not been setup", Toast.LENGTH_SHORT).show();
                     }
 
                 });
+                gridView.setVisibility(View.VISIBLE);
+                progressIndicator.setVisibility(View.INVISIBLE);
             } else {
                 Log.d(TAG, "Error getting documents: ", task.getException());
             }

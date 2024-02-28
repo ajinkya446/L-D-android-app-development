@@ -17,6 +17,21 @@
             tools:context=".views.DashboardScreen"
             tools:ignore="MissingClass">
 
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/progress_circular"
+                style="@style/Widget.App.CircularProgressIndicator"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                app:indicatorSize="70dp"
+                app:trackThickness="4dp"
+                android:indeterminate="true"
+                app:indicatorColor="@color/darkblue"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/appBarLayout"
+                tools:ignore="MissingConstraints" />
+
             <com.google.android.material.appbar.AppBarLayout
                 android:id="@+id/appBarLayout"
                 android:layout_width="match_parent"

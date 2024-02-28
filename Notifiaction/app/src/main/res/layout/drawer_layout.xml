@@ -72,7 +72,7 @@
         android:layout_width="match_parent"
         android:layout_height="30dp" />
 
-    <LinearLayout
+    <!--<LinearLayout
         android:id="@+id/profile_menu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -126,9 +126,10 @@
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="30dp" />
+        android:layout_height="30dp" />-->
 
     <LinearLayout
+
         android:id="@+id/exitMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

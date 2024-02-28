@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.abc.notifiaction.R;
 import com.abc.notifiaction.model.Category;
@@ -33,6 +35,9 @@ public class QuizList extends AppCompatActivity {
         setSupportActionBar(materialToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Intent intent = getIntent();
+        int value = AppCompatDelegate.getDefaultNightMode();
+        Log.d("Mode:", String.valueOf(value));
+        String themeColor = value == 2 ? "#ffffff" : "#000000";
 
         Category categoryModel = (Category) intent.getSerializableExtra("title");
 //        Integer background = intent.getIntExtra("background", 0);
@@ -42,6 +47,8 @@ public class QuizList extends AppCompatActivity {
         GradientDrawable gradientDrawable = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, new int[]{startColor, centerColor, endColor});
 
         materialToolbar.setTitle(categoryModel.getTitleName());
+        materialToolbar.setTitleTextColor(Color.parseColor(themeColor));
+        materialToolbar.setNavigationIconTint(Color.parseColor(themeColor));
         materialToolbar.setBackground(gradientDrawable);
         linearLayout.setBackground(gradientDrawable);
 
@@ -52,6 +59,12 @@ public class QuizList extends AppCompatActivity {
                 openExamPage(quizIntent, categoryModel);
             } else if (categoryModel.getTitleName().equals("Science")) {
                 quizIntent = new Intent(this, ScienceQuestion.class);
+                openExamPage(quizIntent, categoryModel);
+            } else if (categoryModel.getTitleName().equals("Entertainment")) {
+                quizIntent = new Intent(this, EntertainmentScreen.class);
+                openExamPage(quizIntent, categoryModel);
+            } else if (categoryModel.getTitleName().equals("Sports")) {
+                quizIntent = new Intent(this, SportsQuestions.class);
                 openExamPage(quizIntent, categoryModel);
             } else {
                 Toast.makeText(this, "This Test not been setup", Toast.LENGTH_SHORT).show();
