@@ -1,26 +1,29 @@
 package com.abc.notifiaction.views;
 
+import android.annotation.SuppressLint;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.annotation.SuppressLint;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.abc.notifiaction.R;
 import com.abc.notifiaction.adapter.MCQAdapter;
 import com.abc.notifiaction.databinding.ActivityQuestionScreenBinding;
 import com.abc.notifiaction.interfaces.RecyclerViewInterface;
+import com.abc.notifiaction.model.Category;
+import com.abc.notifiaction.model.SingletonExample;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 public class QuestionScreen extends AppCompatActivity implements RecyclerViewInterface {
     private ActivityQuestionScreenBinding activityQuestionScreenBinding;
@@ -30,8 +33,9 @@ public class QuestionScreen extends AppCompatActivity implements RecyclerViewInt
             "The ratio of the length to the height of the flag is 3:2", "Option 1 and 2", "Punjab",
             "5+3+3+4", "Chlorine"};
     ArrayList<ArrayList<String>> answersList = new ArrayList<>();
-    public ArrayList<Boolean> answersMap = new ArrayList<>();
+//    public ArrayList<Boolean> answersMap = new ArrayList<>();
     int pageIndex = 0;
+    SingletonExample singletonExample=new SingletonExample();
 
     @SuppressLint({"SetTextI18n", "MissingInflatedId"})
     @Override
@@ -120,7 +124,6 @@ public class QuestionScreen extends AppCompatActivity implements RecyclerViewInt
         questionList.add("With changes in the education policy, the 10+2 system was abolished and replaced by which system by the NEP 2020?");
         questionList.add("Which ion is the most dissolved in ocean water?");
 
-
         answersList.add(answer1);
         answersList.add(answer2);
         answersList.add(answer3);
@@ -138,17 +141,18 @@ public class QuestionScreen extends AppCompatActivity implements RecyclerViewInt
         activityQuestionScreenBinding.questionLabel.setText("Question " + (pageIndex + 1) + " of 10");
         activityQuestionScreenBinding.question.setText(questionList.get(pageIndex));
         Intent intent = getIntent();
+        Category categoryModel = (Category) intent.getSerializableExtra("title");
 
-        String title = intent.getStringExtra("title");
-        int background = intent.getIntExtra("background", 0);
-
-        activityQuestionScreenBinding.layoutButton2.setBackgroundResource(background);
+        int startColor = Color.parseColor(categoryModel.getColorMap().get("start_color"));
+        int centerColor = Color.parseColor(categoryModel.getColorMap().get("center_color"));
+        int endColor = Color.parseColor(categoryModel.getColorMap().get("end_color"));
+        GradientDrawable gradientDrawable = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, new int[]{startColor, centerColor, endColor});
+        activityQuestionScreenBinding.layoutButton2.setBackground(gradientDrawable);
         activityQuestionScreenBinding.layoutButton2.setOnClickListener(v -> {
             try {
-
-                if (!answersMap.isEmpty()) {
-                    if (pageIndex < 9) {
-                        if (answersMap.get(pageIndex) != null) {
+                if (!singletonExample.answersMap.isEmpty()) {
+                    if (pageIndex < 9 && singletonExample.answersMap.size() > pageIndex) {
+                        if (singletonExample.answersMap.get(pageIndex) != null) {
                             pageIndex = pageIndex + 1;
                             if (pageIndex == 9) {
                                 activityQuestionScreenBinding.btnNext.setText("Submit");
@@ -160,11 +164,21 @@ public class QuestionScreen extends AppCompatActivity implements RecyclerViewInt
                             activityQuestionScreenBinding.answerRecyclerview.setAdapter(adapter);
                             activityQuestionScreenBinding.answerRecyclerview.setLayoutManager(new LinearLayoutManager(this));
                         }
-
-                    }else{
-                        if (pageIndex == 9) {
-                            startActivity(new Intent(getApplicationContext(), RewardScreen.class));
-                            finish();
+                    } else {
+                        if (!singletonExample.answersMap.isEmpty()) {
+                            if (pageIndex < singletonExample.answersMap.size() && singletonExample.answersMap.size() != 10) {
+                                Toast.makeText(this, "Please select answer first", Toast.LENGTH_SHORT).show();
+                            } else {
+                                if (pageIndex >= 9) {
+                                    int occurrences = Collections.frequency(Arrays.asList(singletonExample.answersMap.toArray()), true);
+                                    Intent rewardIntent = new Intent(getApplicationContext(), RewardScreen.class);
+                                    rewardIntent.putExtra("score", String.valueOf(occurrences));
+                                    startActivity(rewardIntent);
+                                    finish();
+                                } else {
+                                    Toast.makeText(this, "Please select answer first", Toast.LENGTH_SHORT).show();
+                                }
+                            }
                         }
                     }
                 } else {
@@ -179,15 +193,19 @@ public class QuestionScreen extends AppCompatActivity implements RecyclerViewInt
 
     @Override
     public void recyclerViewListClicked(View v, int position) {
-        if (pageIndex >= answersMap.size() || pageIndex < 0) {
-            answersMap.add(pageIndex, true);
+        if (pageIndex >= singletonExample.answersMap.size() || pageIndex < 0) {
+            if (answersList.get(pageIndex).get(position).equals(finalAnswer[pageIndex])) {
+                singletonExample.answersMap.add(pageIndex, true);
+            } else {
+                singletonExample.answersMap.add(pageIndex, false);
+            }
         }
     }
 
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
-        isFinish("Want to close app?");
+        isFinish("Want to exit from test?");
     }
 
     public void isFinish(String alertMessage) {

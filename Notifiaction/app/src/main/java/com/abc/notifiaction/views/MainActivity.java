@@ -32,6 +32,12 @@ public class MainActivity extends AppCompatActivity {
         editor.apply();
         ViewPager2Adapter viewPager2Adapter = new ViewPager2Adapter(this);
         activityMainBinding.viewpager.setAdapter(viewPager2Adapter);
+        activityMainBinding.dotsIndicator.attachTo(activityMainBinding.viewpager);
+//        val dotsIndicator = findViewById<DotsIndicator>(R.id.dots_indicator)
+//                val viewPager = findViewById<ViewPager>(R.id.view_pager)
+//                val adapter = ViewPagerAdapter()
+//        viewPager.adapter = adapter
+//        dotsIndicator.attachTo(viewPager)
 
         // To get swipe event of viewpager2
         activityMainBinding.viewpager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {

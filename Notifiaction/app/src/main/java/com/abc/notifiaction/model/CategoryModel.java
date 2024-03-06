@@ -2,23 +2,25 @@ package com.abc.notifiaction.model;
 
 import android.graphics.drawable.Drawable;
 
-public class CategoryModel {
-    public int drawableId;
-    public String titleName;
-    public int drawable;
+import java.io.Serializable;
+import java.util.Map;
 
-    public CategoryModel(int drawableId, String titleName, int drawable) {
+public class CategoryModel implements Serializable {
+    public String drawableId;
+    public String titleName;
+    public Drawable drawable;
+
+    public CategoryModel(String drawableId, String titleName, Drawable drawable) {
         this.drawableId = drawableId;
         this.titleName = titleName;
         this.drawable = drawable;
     }
 
-
-    public int getDrawableId() {
+    public String getDrawableId() {
         return drawableId;
     }
 
-    public void setDrawableId(int drawableId) {
+    public void setDrawableId(String drawableId) {
         this.drawableId = drawableId;
     }
 
@@ -30,11 +32,14 @@ public class CategoryModel {
         this.titleName = titleName;
     }
 
-    public int getDrawable() {
+    public Drawable getDrawable() {
         return drawable;
     }
 
-    public void setDrawable(int drawable) {
+    public void setDrawable(Drawable drawable) {
         this.drawable = drawable;
     }
 }
+
+
+

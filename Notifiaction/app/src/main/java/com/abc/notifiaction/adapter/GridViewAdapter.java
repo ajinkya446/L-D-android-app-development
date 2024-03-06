@@ -15,8 +15,10 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.abc.notifiaction.model.CategoryModel;
 import com.abc.notifiaction.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class GridViewAdapter extends ArrayAdapter<CategoryModel> {
     public Context ctx;
@@ -42,10 +44,12 @@ public class GridViewAdapter extends ArrayAdapter<CategoryModel> {
         ImageView imgGridview = listitemView.findViewById(R.id.imgViewGrid);
         CardView cardView = listitemView.findViewById(R.id.cardView);
         ConstraintLayout constraintLayout = listitemView.findViewById(R.id.constraint);
-        constraintLayout.setBackgroundResource(categoryModel.drawable);
+        constraintLayout.setBackground(categoryModel.getDrawable());
 
         titleGridView.setText(categoryModel.titleName);
-        imgGridview.setImageResource(categoryModel.drawableId);
+        Picasso.get().load(Objects.requireNonNull(categoryModel.getDrawableId().toString())).into(imgGridview);
+
+//        imgGridview.setImageResource(categoryModel.getDrawableId());
 
         /*cardView.setOnClickListener(v -> {
             Toast.makeText(ctx, "Category " + categoryModel.titleName + " " + "selected", Toast.LENGTH_SHORT).show();
