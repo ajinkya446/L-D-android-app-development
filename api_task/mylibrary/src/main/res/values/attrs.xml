@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="titleName" format="string" />
+    <attr name="btn_text_color" format="color" />
+    <declare-styleable name="ButtonUI">
+        <attr name="titleName" />
+        <attr name="btn_text_color" />
+    </declare-styleable>
+</resources>
