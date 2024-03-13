@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="a817aef6-6dcd-4997-ba61-21129f2184e0" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/../app/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/example/api_task/APIService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/mylibrary/APIService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/example/api_task/Adapter/AlbumAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/mylibrary/Adapter/AlbumAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/example/api_task/Adapter/TodoAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/mylibrary/Adapter/TodoAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/example/api_task/Adapter/UserAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/mylibrary/Adapter/UserAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/example/api_task/AlbumList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/mylibrary/AlbumList.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/example/api_task/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/example/api_task/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/example/api_task/Model/Address.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/mylibrary/Model/Address.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/example/api_task/Model/Album.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/mylibrary/Model/Album.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/example/api_task/Model/Company.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/mylibrary/Model/Company.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/example/api_task/Model/Geo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/mylibrary/Model/Geo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/example/api_task/Model/Todos.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/mylibrary/Model/Todos.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/example/api_task/Model/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/mylibrary/Model/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/example/api_task/TodosList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/mylibrary/TodosList.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/activity_album_list.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/res/layout/activity_album_list.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/activity_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/res/layout/activity_main.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/activity_todos_list.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/res/layout/activity_todos_list.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/../build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../settings.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/../settings.gradle.kts" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="ProjectId" id="2dJS1ZLUM7vu1cp00IaK7A1PDRt" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "android.gradle.sync.needed": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "dart.analysis.tool.window.visible": "false",
+    "git-widget-placeholder": "development",
+    "last_opened_file_path": "D:/L-D-android-app-development/api_task/mylibrary",
+    "show.migrate.to.gradle.popup": "false"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="a817aef6-6dcd-4997-ba61-21129f2184e0" name="Changes" comment="" />
+      <created>1709724473479</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1709724473479</updated>
+    </task>
+    <servers />
+  </component>
+</project>
