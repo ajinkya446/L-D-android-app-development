@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: CustomPaint(painter: MyPainter(Colors.green, shader: fragmentProgram.fragmentShader())),
+      home: CustomPaint(painter: MyPainter(Color(0x884CAF50), shader: fragmentProgram.fragmentShader())),
     );
   }
 }

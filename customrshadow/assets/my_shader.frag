@@ -10,6 +10,7 @@ out vec4 FragColor;
 void main(){
     vec2 pixel = FlutterFragCoord()/uSize;
     vec4 white = vec4(1.0);
+    vec4 colorWithAlpha = vec4(uColor.rgb * uColor.a, uColor.a);
     //    FragColor = vec4(uColor.r, uColor.g, uColor.b, uColor.a);
-    FragColor = mix(uColor, white, pixel.x);
+    FragColor = mix(colorWithAlpha, white, pixel.x);
 }
