@@ -118,10 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.white,
-      body: /*Align(
-        alignment: Alignment.bottomRight,
-        child:*/
-          Container(
+      /*body: Container(
         margin: const EdgeInsets.only(right: 16),
         height: double.maxFinite,
         width: double.maxFinite,
@@ -161,11 +158,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ValueListenableBuilder(
                   valueListenable: isLoading,
                   builder: (newCtx, value, child) {
-                    return value
-                        ? Container(
-                            child: const ProgressIndicatorDemo(),
-                          )
-                        : Container();
+                    return value ? const ProgressIndicatorDemo() : Container();
                   }),
               Expanded(child: getChatList()),
               Align(
@@ -241,7 +234,10 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
         // ),
-      ),
+      ),Align(
+        alignment: Alignment.bottomRight,
+        child:*/
+
       /*appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -463,151 +459,151 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       ),*/
-      // floatingActionButton: (!isAIOpened)
-      //     ? FloatingActionButton(
-      //         backgroundColor: const Color(0xff2200FF),
-      //         onPressed: () {
-      //           setState(() {
-      //             isAIOpened = true;
-      //           });
-      //         } /*_incrementCounter*/,
-      //         child: Image.asset("assets/images/chatbot.png", height: 30) /* const Icon(Icons.add)*/,
-      //       )
-      //     : Align(
-      //         alignment: Alignment.bottomRight,
-      //         child: Container(
-      //           margin: const EdgeInsets.only(right: 16),
-      //           height: MediaQuery.of(context).size.height * 0.700,
-      //           width: MediaQuery.of(context).size.width * 0.300,
-      //           child: Card(
-      //             elevation: 8,
-      //             color: Colors.grey.shade200,
-      //             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      //             child: Column(
-      //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //               crossAxisAlignment: /*isLoading ? CrossAxisAlignment.center :*/ CrossAxisAlignment.start,
-      //               children: [
-      //                 Container(
-      //                   padding: const EdgeInsets.symmetric(horizontal: 16),
-      //                   height: MediaQuery.of(context).size.height * 0.10,
-      //                   decoration: const BoxDecoration(
-      //                     // border: Border(bottom: BorderSide(color: Colors.black)),
-      //                     borderRadius: BorderRadius.only(topRight: Radius.circular(24), topLeft: Radius.circular(24)),
-      //                     color: Color(0xff2200FF),
-      //                   ),
-      //                   child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-      //                     Image.asset("assets/images/chatbot.png", height: 30),
-      //                     Text('Chatbot Support',
-      //                         style: GoogleFonts.poppins(
-      //                           textStyle: TextStyle(
-      //                               fontSize: (MediaQuery.of(context).size.width > 500) ? MediaQuery.of(context).size.height * 0.022 : MediaQuery.of(context).size.height * 0.018,
-      //                               fontWeight: FontWeight.w700,
-      //                               color: Colors.white),
-      //                         )),
-      //                     IconButton(
-      //                       onPressed: () {
-      //                         setState(() {
-      //                           isAIOpened = false;
-      //                         });
-      //                       },
-      //                       icon: const Icon(Icons.close, color: Colors.white, size: 20),
-      //                     )
-      //                   ]),
-      //                 ),
-      //                 ValueListenableBuilder(
-      //                     valueListenable: isLoading,
-      //                     builder: (newCtx, value, child) {
-      //                       return value
-      //                           ? Container(
-      //                               child: new ProgressIndicatorDemo(),
-      //                             )
-      //                           : Container();
-      //                     }),
-      //                 Expanded(child: getChatList()),
-      //                 Align(
-      //                   alignment: Alignment.bottomCenter,
-      //                   child: Container(
-      //                     height: 70,
-      //                     padding: const EdgeInsets.symmetric(horizontal: 16),
-      //                     decoration: BoxDecoration(
-      //                         borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(16), bottomRight: Radius.circular(16)), border: Border.all(width: 1.5, color: const Color(0xff2200FF))),
-      //                     // margin: const EdgeInsets.symmetric(horizontal: 16),
-      //                     child: Row(
-      //                       mainAxisAlignment: MainAxisAlignment.center,
-      //                       mainAxisSize: MainAxisSize.max,
-      //                       children: [
-      //                         // InkWell(onTap: () {}, child: SvgPicture.asset("assets/images/attachment.svg", height: 18, width: 18)),
-      //                         Expanded(
-      //                           child: TextField(
-      //                               controller: chatController,
-      //                               onSubmitted: (value) {
-      //                                 if (kIsWeb) {
-      //                                   isScroll = true;
-      //                                   checkChatResponse();
-      //                                 }
-      //                               },
-      //                               decoration:
-      //                                   const InputDecoration(hintText: 'Your Message', border: InputBorder.none, contentPadding: EdgeInsets.all(16.0), hintStyle: TextStyle(color: Color(0xff2200FF))),
-      //                               style: const TextStyle(color: Color(0xff2200FF))),
-      //                         ),
-      //                         InkWell(
-      //                           onTap: () async {
-      //                             html.window.navigator.getUserMedia(audio: true).then((value) async {
-      //                               // listening = false;
-      //                               try {
-      //                                 if (isMicAvailable) {
-      //                                   if (!isListening) {
-      //                                     listening = true;
-      //                                     speech.listen(onResult: _onSpeechResult, listenFor: const Duration(seconds: 20)).then((value) {
-      //                                       Future.delayed(const Duration(seconds: 20), () {
-      //                                         speech.stop();
-      //                                         listening = false;
-      //                                       });
-      //                                     });
-      //                                   } else {
-      //                                     listening = false;
-      //                                     speech.stop();
-      //                                   }
-      //                                   setState(() {});
-      //                                   return;
-      //                                 }
-      //                               } catch (e) {
-      //                                 rethrow;
-      //                               }
-      //                             });
-      //                             /*if (isMicAvailable) {
-      //                                     if (!isListening) {
-      //                                       listening = true;
-      //                                       print("Enabled: Microphone");
-      //                                       speech.listen(onResult: _onSpeechResult).whenComplete(() => speech.stop());
-      //                                     } else {
-      //                                       listening = false;
-      //                                       speech.stop();
-      //                                       print("Stopped: Microphone  Stopped");
-      //                                     }
-      //                                     setState(() {});
-      //                                     return;
-      //                                   }*/
-      //                           },
-      //                           child: Icon(isListening ? Icons.mic_none_outlined : Icons.mic_off, size: 18.0, color: const Color(0xff2200FF)),
-      //                         ),
-      //                         const SizedBox(width: 20),
-      //                         InkWell(
-      //                           child: const Icon(Icons.send_outlined, size: 18.0, color: Color(0xff2200FF)),
-      //                           onTap: () {
-      //                             isScroll = true;
-      //                             checkChatResponse();
-      //                           },
-      //                         ),
-      //                       ],
-      //                     ),
-      //                   ),
-      //                 )
-      //               ],
-      //             ),
-      //           ),
-      //         ),
-      //       ), // This trailing comma makes auto-formatting nicer for build methods.
+      floatingActionButton: (!isAIOpened)
+          ? FloatingActionButton(
+              backgroundColor: const Color(0xff2200FF),
+              onPressed: () {
+                setState(() {
+                  isAIOpened = true;
+                });
+              } /*_incrementCounter*/,
+              child: Image.asset("assets/images/chatbot.png", height: 30) /* const Icon(Icons.add)*/,
+            )
+          : Align(
+              alignment: Alignment.bottomRight,
+              child: Container(
+                margin: const EdgeInsets.only(right: 16),
+                height: MediaQuery.of(context).size.height * 0.700,
+                width: MediaQuery.of(context).size.width * 0.300,
+                child: Card(
+                  elevation: 8,
+                  color: Colors.grey.shade200,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: /*isLoading ? CrossAxisAlignment.center :*/ CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        height: MediaQuery.of(context).size.height * 0.10,
+                        decoration: const BoxDecoration(
+                          // border: Border(bottom: BorderSide(color: Colors.black)),
+                          borderRadius: BorderRadius.only(topRight: Radius.circular(24), topLeft: Radius.circular(24)),
+                          color: Color(0xff2200FF),
+                        ),
+                        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                          Image.asset("assets/images/chatbot.png", height: 30),
+                          Text('Chatbot Support',
+                              style: GoogleFonts.poppins(
+                                textStyle: TextStyle(
+                                    fontSize: (MediaQuery.of(context).size.width > 500) ? MediaQuery.of(context).size.height * 0.022 : MediaQuery.of(context).size.height * 0.018,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.white),
+                              )),
+                          IconButton(
+                            onPressed: () {
+                              setState(() {
+                                isAIOpened = false;
+                              });
+                            },
+                            icon: const Icon(Icons.close, color: Colors.white, size: 20),
+                          )
+                        ]),
+                      ),
+                      ValueListenableBuilder(
+                          valueListenable: isLoading,
+                          builder: (newCtx, value, child) {
+                            return value
+                                ? Container(
+                                    child: new ProgressIndicatorDemo(),
+                                  )
+                                : Container();
+                          }),
+                      Expanded(child: getChatList()),
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Container(
+                          height: 70,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(16), bottomRight: Radius.circular(16)), border: Border.all(width: 1.5, color: const Color(0xff2200FF))),
+                          // margin: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              // InkWell(onTap: () {}, child: SvgPicture.asset("assets/images/attachment.svg", height: 18, width: 18)),
+                              Expanded(
+                                child: TextField(
+                                    controller: chatController,
+                                    onSubmitted: (value) {
+                                      if (kIsWeb) {
+                                        isScroll = true;
+                                        checkChatResponse();
+                                      }
+                                    },
+                                    decoration:
+                                        const InputDecoration(hintText: 'Your Message', border: InputBorder.none, contentPadding: EdgeInsets.all(16.0), hintStyle: TextStyle(color: Color(0xff2200FF))),
+                                    style: const TextStyle(color: Color(0xff2200FF))),
+                              ),
+                              InkWell(
+                                onTap: () async {
+                                  html.window.navigator.getUserMedia(audio: true).then((value) async {
+                                    // listening = false;
+                                    try {
+                                      if (isMicAvailable) {
+                                        if (!isListening) {
+                                          listening = true;
+                                          speech.listen(onResult: _onSpeechResult, listenFor: const Duration(seconds: 20)).then((value) {
+                                            Future.delayed(const Duration(seconds: 20), () {
+                                              speech.stop();
+                                              listening = false;
+                                            });
+                                          });
+                                        } else {
+                                          listening = false;
+                                          speech.stop();
+                                        }
+                                        setState(() {});
+                                        return;
+                                      }
+                                    } catch (e) {
+                                      rethrow;
+                                    }
+                                  });
+                                  /*if (isMicAvailable) {
+                                          if (!isListening) {
+                                            listening = true;
+                                            print("Enabled: Microphone");
+                                            speech.listen(onResult: _onSpeechResult).whenComplete(() => speech.stop());
+                                          } else {
+                                            listening = false;
+                                            speech.stop();
+                                            print("Stopped: Microphone  Stopped");
+                                          }
+                                          setState(() {});
+                                          return;
+                                        }*/
+                                },
+                                child: Icon(isListening ? Icons.mic_none_outlined : Icons.mic_off, size: 18.0, color: const Color(0xff2200FF)),
+                              ),
+                              const SizedBox(width: 20),
+                              InkWell(
+                                child: const Icon(Icons.send_outlined, size: 18.0, color: Color(0xff2200FF)),
+                                onTap: () {
+                                  isScroll = true;
+                                  checkChatResponse();
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 

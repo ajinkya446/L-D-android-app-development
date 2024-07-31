@@ -2,6 +2,7 @@ package com.example.ocacapp
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -23,6 +24,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -120,6 +122,7 @@ fun DashboardScreenUI() {
     var pageIndex by remember { mutableStateOf(0) }
     val langItems = listOf("English", "Hindi", "Orissa")
     var selectedItem by remember { mutableStateOf("English") }
+    val context = LocalContext.current
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -314,14 +317,21 @@ fun DashboardScreenUI() {
             }
         },
             floatingActionButtonPosition = FabPosition.End, floatingActionButton = {
+
                 Icon(
                     contentDescription = "helpline",
                     modifier = Modifier
                         .height(58.dp)
-                        .width(58.dp),
+                        .width(58.dp).clickable {
+                            val intent = Intent(Intent.ACTION_DIAL).apply {
+                                data = Uri.parse("tel:155233")
+                            }
+                            context.startActivity(intent)
+                        },
                     painter = painterResource(id = R.drawable.helpline_mobile),
                     tint = Color.Unspecified
                 )
+
             }) { it ->
             Column(
                 horizontalAlignment = Alignment.Start,
